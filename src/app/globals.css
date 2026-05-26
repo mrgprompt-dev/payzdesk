@@ -555,3 +555,273 @@ button {
 .step-line.done {
   background-color: var(--accent-green);
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Drawer / Sidebar nav classes
+   (DESIGN.md section 4 — Drawer styling rules)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Base drawer item — 48px min tap target */
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+  /* Left border placeholder — 3px transparent keeps layout stable */
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.drawer-item:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Active state — gold left border + subtle gold bg tint */
+.drawer-item-active {
+  border-left-color: var(--accent-gold);
+  background-color: rgba(245, 166, 35, 0.08);
+  color: var(--accent-gold);
+}
+
+/* Accordion sub-items — no icon, indented, muted */
+.drawer-child {
+  display: block;
+  padding: 10px 20px 10px 56px; /* 56px = icon area indent */
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  min-height: 40px;
+  border-left: 3px solid transparent;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.drawer-child:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Section label — ALL CAPS, 11px, muted, tracked
+   (DESIGN.md section 3 + used across filters, form groups, settings)
+   ════════════════════════════════════════════════════════════════════════════ */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Page card — standard glass content card
+   ════════════════════════════════════════════════════════════════════════════ */
+.page-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Gold card — solid gold background for earnings / referral highlights
+   ════════════════════════════════════════════════════════════════════════════ */
+.gold-card {
+  background: var(--accent-gold);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  color: #1a1000;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Inset box — darker inset within a card (e.g. max withdrawal limit display)
+   ════════════════════════════════════════════════════════════════════════════ */
+.inset-box {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Stat card — dashboard metric tile
+   ════════════════════════════════════════════════════════════════════════════ */
+.stat-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Empty state — no-data card
+   ════════════════════════════════════════════════════════════════════════════ */
+.empty-state {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Button variants missing from original globals.css
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Gold gradient pill — referral code copy, "Verify & Add Bank" */
+.btn-gold {
+  width: 100%;
+  background: linear-gradient(145deg, var(--accent-gold-light), var(--accent-gold));
+  color: #1a1000;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 16px 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 16px var(--accent-gold-dim);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 166, 35, 0.3);
+}
+.btn-gold:active {
+  transform: scale(0.97);
+}
+.btn-gold:disabled {
+  background: var(--bg-input);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Danger red pill — cancel / destructive */
+.btn-danger {
+  width: 100%;
+  background: var(--accent-red);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn-danger:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+.btn-danger:active {
+  transform: scale(0.97);
+}
+
+/* Settings row — icon circle + text block + toggle/value */
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+}
+
+/* Filter card wrapper */
+.filter-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+/* Segmented pill tab switcher (referral screen) */
+.segmented-tabs {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  gap: 2px;
+}
+.segmented-tab {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.segmented-tab.active {
+  background: var(--accent-gold);
+  color: #1a1000;
+}
+
+/* Quick link circle button (dashboard) */
+.quick-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.quick-link-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+.quick-link-icon:active {
+  transform: scale(0.94);
+}
+.quick-link-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}

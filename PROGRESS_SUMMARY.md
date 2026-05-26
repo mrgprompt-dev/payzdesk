@@ -1,6 +1,6 @@
 # PlayzDesk — Progress Summary
 
-**Last updated:** 2026-05-25  
+**Last updated:** 2026-05-26  
 **Stack:** Next.js 16 · TypeScript · Tailwind v4 · App Router
 
 ---
@@ -29,10 +29,10 @@
 - Models: User, BankAccount, Transaction, UTR
 
 ### Design system & shell
-- `globals.css` — dark navy, gold accent, green CTA tokens
+- `globals.css` — dark navy, gold accent, green CTA tokens (~800 lines); CSS vars + Tailwind v4 `@theme` bridge
 - UI primitives: Button, Input, Card, Badge, Spinner
-- `(dashboard)/layout.tsx` + empty Sidebar shell
 - `middleware.ts` — protects dashboard; auth routes + `/api/auth` public
+- **Design rule going forward:** Tailwind utility classes first; inline `style` only for CSS vars Tailwind can't reach; no new custom CSS classes in `globals.css`
 
 ### Auth (API & Pages)
 - `api/auth` fully built (register, login, OTP, refresh, logout, me, forgot-password)
@@ -40,8 +40,20 @@
 - Zustand auth store (`authStore.ts`)
 - JWT wired to `accessToken` and `refreshToken` cookies
 
+### App wiring ✅ (completed 2026-05-26)
+- `src/app/layout.tsx` — root layout with Inter font + TanStack Query provider; body bg/color driven by CSS vars only (no Tailwind override)
+- `src/components/providers/QueryProvider.tsx` — TanStack Query client (30s staleTime, retry 1, no refetchOnWindowFocus)
+- `src/app/(dashboard)/layout.tsx` — dashboard shell: gradient bg via CSS vars, `min-h-[100dvh]`, `max-w-3xl` content column, slots MobileHeader + Sidebar
+- `src/components/layout/Sidebar.tsx` — full nav rebuilt to DESIGN.md spec:
+  - Desktop: 260px sticky sidebar, `bg-sidebar`, logo, user area, nav, logout
+  - Mobile: 52px fixed header (hamburger / centred logo / green Deposit pill), 85vw slide-in drawer
+  - Active state: 3px gold left border + `bg-gold-dim` tint (Tailwind, no custom class)
+  - Nav order matches `CONVERSION_SPEC.md` section 3 exactly (Home → History accordion → Bank Details → Change Password → Performance Commission → Settings → UTR accordion → Reports accordion → Help accordion → Refer & Earn → Logout)
+  - All colors reference CSS vars / `@theme` tokens — zero hardcoded hex values
+
 ### Docs
 - `vision.md`, `CONVERSION_SPEC.md` (product + route reference)
+- `DESIGN.md` v2.0 — full design system, component patterns, mobile rules
 
 ---
 
@@ -60,11 +72,11 @@
 - [ ] `/utr`, `/utr/create`
 - [ ] `/profile`, `/settings`
 
-### App wiring
-- [ ] TanStack Query provider in root layout
-- [ ] Sidebar nav links + mobile layout
-- [ ] Shared components: StatCard, FilterBar, DataTable, EmptyState
-- [ ] Fill `.env.local` and connect MongoDB + Redis
+### Shared components (build alongside pages)
+- [ ] `StatCard` — dashboard metric tile
+- [ ] `FilterBar` — status dropdown + search + clear + date
+- [ ] `DataTable` / list rows — deposits, withdrawals, UTR
+- [ ] `EmptyState` — "No Data Exists." card
 
 ---
 
@@ -97,13 +109,13 @@ Per `vision.md` / `CONVERSION_SPEC.md` — not in folder tree yet:
 | `/profile` | ✅ | ⬜ | ⬜ |
 | `/settings` | ✅ | ⬜ | ⬜ |
 
-✅ = scaffold only · ⬜ = to build
+✅ = done · ⬜ = to build
 
 ---
 
 ## Suggested next step
 
-1. Fill `.env.local` and verify DB/Redis connections  
-2. Setup TanStack query provider in root layout
-3. Dashboard home (`/`) then deposits/withdrawals flows
-4. Build `api/banks` and `api/transactions`
+1. Fill `.env.local` and verify DB/Redis connections
+2. Build dashboard home (`/`) — overview metrics, live pool card, quick links, referral banner, support CTA, inline deposit/withdrawal lists
+3. Build `api/banks` + `api/transactions` in parallel
+4. Build `/deposits` and `/withdrawals` list pages with FilterBar
