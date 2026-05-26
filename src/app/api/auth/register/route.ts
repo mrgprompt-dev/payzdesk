@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
-import { verifyOTP } from '@/lib/redis'
+import { consumeOTP } from '@/lib/redis'
 import { signAccessToken, signRefreshToken, accessCookieOptions, refreshCookieOptions, ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth'
 import { User } from '@/models/User'
 import { sanitizePhone } from '@/utils'
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const phone = sanitizePhone(rawPhone)
 
     // Verify OTP before creating account
-    const otpValid = await verifyOTP(phone, 'register', otp)
+    const otpValid = await consumeOTP(phone, 'register', otp)
     if (!otpValid) {
       return NextResponse.json(
         { success: false, message: 'Invalid or expired OTP. Please request a new one.' },

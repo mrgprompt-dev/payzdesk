@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyRefreshToken, signAccessToken, accessCookieOptions, ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth'
 import { cookies } from 'next/headers'
+import { connectDB } from '@/lib/db'
+import { User } from '@/models/User'
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,9 +18,19 @@ export async function POST(req: NextRequest) {
 
     const payload = verifyRefreshToken(refreshToken)
 
+    await connectDB()
+    const user = await User.findById(payload.userId).select('isActive phone')
+
+    if (!user || !user.isActive) {
+      return NextResponse.json(
+        { success: false, message: 'Account is suspended or deleted' },
+        { status: 403 }
+      )
+    }
+
     const newAccessToken = signAccessToken({
-      userId: payload.userId,
-      phone: payload.phone,
+      userId: user._id.toString(),
+      phone: user.phone,
     })
 
     cookieStore.set(ACCESS_COOKIE, newAccessToken, accessCookieOptions)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
-import { verifyOTP } from '@/lib/redis'
+import { consumeOTP } from '@/lib/redis'
 import { User } from '@/models/User'
 import { sanitizePhone } from '@/utils'
 import { z } from 'zod'
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const phone = sanitizePhone(rawPhone)
 
     // Verify OTP
-    const otpValid = await verifyOTP(phone, 'forgot-password', otp)
+    const otpValid = await consumeOTP(phone, 'forgot-password', otp)
     if (!otpValid) {
       return NextResponse.json(
         { success: false, message: 'Invalid or expired OTP. Please try again.' },

@@ -33,16 +33,25 @@ export async function storeOTP(
   await redis.setex(otpKey(phone, purpose), OTP_TTL_SECONDS, otp)
 }
 
-export async function verifyOTP(
+export async function peekOTP(
   phone: string,
   purpose: string,
   otp: string
 ): Promise<boolean> {
   const stored = await redis.get(otpKey(phone, purpose))
-  if (!stored || String(stored) !== String(otp)) return false
-  // Delete after successful verification (one-time use)
-  await redis.del(otpKey(phone, purpose))
-  return true
+  return stored ? String(stored) === String(otp) : false
+}
+
+export async function consumeOTP(
+  phone: string,
+  purpose: string,
+  otp: string
+): Promise<boolean> {
+  const valid = await peekOTP(phone, purpose, otp)
+  if (valid) {
+    await redis.del(otpKey(phone, purpose))
+  }
+  return valid
 }
 
 export async function checkOTPRateLimit(

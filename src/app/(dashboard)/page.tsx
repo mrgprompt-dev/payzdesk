@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
 import { formatINR } from '@/utils'
 import {
@@ -19,14 +20,16 @@ import {
   ChevronRight,
   Users,
 } from 'lucide-react'
+import { StatusBadge } from '@/components/shared/StatusBadge'
+import type { ITransaction, IBankAccount } from '@/types'
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
 
 function SkeletonCard() {
   return (
     <div className="rounded-[14px] border border-border bg-card p-4 space-y-3">
-      <div className="h-3 w-1/2 rounded animate-pulse bg-[var(--bg-skeleton)]" />
-      <div className="h-6 w-1/3 rounded animate-pulse bg-[var(--bg-skeleton)]" />
+      <div className="skeleton h-[42px] w-[140px] rounded-full bg-(--bg-skeleton) border border-border-subtle" />
+      <div className="skeleton h-[42px] w-[42px] rounded-full bg-(--bg-skeleton) border border-border-subtle shrink-0" />
     </div>
   )
 }
@@ -106,16 +109,73 @@ function QuickLink({ icon: Icon, iconColor, label, href }: QuickLinkProps) {
   )
 }
 
-// ─── Inline transaction row ───────────────────────────────────────────────────
+// ─── Inline transaction list (dashboard) ─────────────────────────────────────
 
-// Placeholder until /api/transactions is built
-function EmptyListCard({ title }: { title: string }) {
+interface PopulatedTxn extends Omit<ITransaction, 'bankId'> {
+  bankId?: Pick<IBankAccount, '_id' | 'bankName'> | string | null
+}
+
+async function fetchTxns(type: 'deposit' | 'withdrawal'): Promise<PopulatedTxn[]> {
+  const res = await fetch(`/api/transactions?type=${type}`)
+  if (!res.ok) return []
+  const json = await res.json()
+  return (json.data ?? []).slice(0, 3) // show max 3 inline
+}
+
+function InlineList({
+  type,
+  title,
+  icon: Icon,
+  iconColor,
+  viewAllHref,
+}: {
+  type: 'deposit' | 'withdrawal'
+  title: string
+  icon: React.ElementType
+  iconColor: string
+  viewAllHref: string
+}) {
+  const { data: txns = [], isLoading } = useQuery<PopulatedTxn[]>({
+    queryKey: ['dashboard-txns', type],
+    queryFn:  () => fetchTxns(type),
+    staleTime: 30_000,
+  })
+
   return (
-    <div className="rounded-[14px] border border-border bg-card backdrop-blur-md p-4">
-      <p className="text-[13px] font-bold uppercase tracking-wider text-primary mb-2">
-        {title}
-      </p>
-      <p className="text-[13px] text-muted">No data available</p>
+    <div className="rounded-[14px] border border-border bg-card backdrop-blur-md overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3.5 border-b border-border-subtle">
+        <p className="text-[13px] font-bold uppercase tracking-wider text-primary">{title}</p>
+        <Link href={viewAllHref} className="text-[12px] font-semibold text-gold hover:text-gold-light transition-colors">
+          View all
+        </Link>
+      </div>
+
+      {isLoading && (
+        <div className="flex flex-col gap-2 p-4">
+          {[1,2].map(i => <div key={i} className="skeleton h-10 rounded-[10px]" />)}
+        </div>
+      )}
+
+      {!isLoading && txns.length === 0 && (
+        <p className="text-[13px] text-muted px-4 py-4">No data available</p>
+      )}
+
+      {!isLoading && txns.length > 0 && (
+        <div className="divide-y divide-border-subtle">
+          {txns.map((txn) => (
+            <div key={txn._id} className="flex items-center gap-3 px-4 py-3">
+              <Icon className="w-4 h-4 shrink-0" style={{ color: iconColor }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-primary">{formatINR(txn.amount)}</p>
+                {txn.bankId && typeof txn.bankId !== 'string' && (
+                  <p className="text-[11px] text-muted truncate">{txn.bankId.bankName}</p>
+                )}
+              </div>
+              <StatusBadge status={txn.status as 'pending' | 'completed' | 'failed' | 'disputed'} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -163,7 +223,7 @@ export default function DashboardPage() {
               style={{ background: 'rgba(255,255,255,0.06)' }}
             >
               <ArrowDownToLine className="h-3 w-3" />
-              Deposit Requests ({user?.totalBanks ?? 0})
+              Total Banks ({user?.totalBanks ?? 0})
             </Link>
             <Link
               href="/withdrawals"
@@ -252,28 +312,42 @@ export default function DashboardPage() {
 
         {/* Content + lock overlay */}
         <div className="relative">
-          <div className="blur-[2px] select-none pointer-events-none">
+          <div className={user?.withdrawalEnabled ? "" : "blur-[2px] select-none pointer-events-none"}>
             <p className="text-[15px] font-bold text-primary mb-1">Earn Extra Commission</p>
             <p className="text-[13px] text-secondary leading-snug">
               GRAB a withdrawal request before someone else does!
             </p>
           </div>
           {/* Lock icon centred over blurred content */}
-          <div className="absolute inset-0 flex items-center justify-end pr-2">
-            <Lock className="h-6 w-6" style={{ color: 'var(--accent-gold)' }} />
-          </div>
+          {!user?.withdrawalEnabled && (
+            <div className="absolute inset-0 flex items-center justify-end pr-2">
+              <Lock className="h-6 w-6" style={{ color: 'var(--accent-gold)' }} />
+            </div>
+          )}
         </div>
 
-        <p className="text-[12px] text-secondary mt-3 mb-3">
-          Enable Withdrawal in Settings to unlock
-        </p>
+        {!user?.withdrawalEnabled && (
+          <p className="text-[12px] text-secondary mt-3 mb-3">
+            Enable Withdrawal in Settings to unlock
+          </p>
+        )}
+        {user?.withdrawalEnabled && <div className="mt-3 mb-3" />}
 
         <div className="flex items-center justify-between gap-3">
-          {/* Disabled button */}
+          {/* Button */}
           <button
-            disabled
-            className="flex-1 py-3 rounded-full text-[14px] font-bold text-muted flex items-center justify-center gap-2 cursor-not-allowed"
-            style={{ background: 'var(--bg-input)' }}
+            disabled={!user?.withdrawalEnabled}
+            className={`flex-1 py-3 rounded-full text-[14px] font-bold flex items-center justify-center gap-2 ${
+              user?.withdrawalEnabled 
+                ? 'text-[#1a1000] active:scale-[0.98] transition-transform' 
+                : 'text-muted cursor-not-allowed'
+            }`}
+            style={{ 
+              background: user?.withdrawalEnabled 
+                ? 'linear-gradient(145deg, var(--accent-gold-light), var(--accent-gold))' 
+                : 'var(--bg-input)',
+              boxShadow: user?.withdrawalEnabled ? '0 4px 12px var(--accent-gold-dim)' : 'none'
+            }}
           >
             Open Live Pool
             <ChevronRight className="h-4 w-4" />
@@ -306,7 +380,7 @@ export default function DashboardPage() {
           <QuickLink
             icon={ArrowDownToLine}
             iconColor="var(--accent-blue)"
-            label="Deposit Requests"
+            label="Total Banks"
             href="/deposits"
           />
           <QuickLink
@@ -356,12 +430,24 @@ export default function DashboardPage() {
       {/* ══════════════════════════════════════════
           INLINE DEPOSIT REQUESTS LIST
           ══════════════════════════════════════════ */}
-      <EmptyListCard title="Deposit Requests (0)" />
+      <InlineList
+        type="deposit"
+        title="Deposit Requests"
+        icon={ArrowDownToLine}
+        iconColor="var(--accent-blue)"
+        viewAllHref="/deposits"
+      />
 
       {/* ══════════════════════════════════════════
           INLINE WITHDRAWAL REQUESTS LIST
           ══════════════════════════════════════════ */}
-      <EmptyListCard title="Withdrawal Requests" />
+      <InlineList
+        type="withdrawal"
+        title="Withdrawal Requests"
+        icon={ArrowUpFromLine}
+        iconColor="var(--accent-amber)"
+        viewAllHref="/withdrawals"
+      />
 
     </div>
   )

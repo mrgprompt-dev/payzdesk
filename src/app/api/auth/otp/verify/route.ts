@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyOTP } from '@/lib/redis'
+import { peekOTP } from '@/lib/redis'
 import { sanitizePhone } from '@/utils'
 import { z } from 'zod'
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const { phone: rawPhone, otp, purpose } = parsed.data
     const phone = sanitizePhone(rawPhone)
 
-    const valid = await verifyOTP(phone, purpose, otp)
+    const valid = await peekOTP(phone, purpose, otp)
 
     if (!valid) {
       return NextResponse.json(

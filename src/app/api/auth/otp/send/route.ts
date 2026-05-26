@@ -39,14 +39,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // For login / forgot-password: phone MUST exist
+    // For login / forgot-password: phone MUST exist for OTP to be useful,
+    // but we return a generic success message to prevent enumeration.
     if (purpose === 'login' || purpose === 'forgot-password') {
       const existing = await User.findOne({ phone })
       if (!existing) {
-        return NextResponse.json(
-          { success: false, message: 'Phone number not registered' },
-          { status: 404 }
-        )
+        // Return a fake success response that mimics the real one
+        return NextResponse.json({
+          success: true,
+          message: `If the number is registered, an OTP has been sent.`,
+        })
       }
     }
 
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `OTP sent to +91 ${phone}`,
+      message: purpose === 'register' ? `OTP sent to +91 ${phone}` : `If the number is registered, an OTP has been sent.`,
     })
   } catch (err) {
     console.error('[OTP Send]', err)
