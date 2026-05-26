@@ -1,6 +1,6 @@
 # PayzDesk — Progress Summary
 
-**Last updated:** 2026-05-27
+**Last updated:** 2026-05-27 (Referral ✅, Commission ✅)
 **Stack:** Next.js 16 · TypeScript · Tailwind v4 · App Router
 
 ---
@@ -54,9 +54,9 @@ Build these routes in order:
 
 | Priority | Route                       | Screen                    | Status |
 | -------- | --------------------------- | ------------------------- | ------ |
-| 1        | `/referral`                 | Refer & Earn              | ⬜     |
-| 2        | `/commission/performance`   | Performance Commission    | ⬜     |
-| 3        | `/commission/details`       | Commission Details        | ⬜     |
+| 1        | `/referral`                 | Refer & Earn              | ✅     |
+| 2        | `/commission/performance`   | Performance Commission    | ✅     |
+| 3        | `/commission/details`       | Commission Details        | ✅     |
 | 4        | `/transactions/:id`         | Transaction Detail        | ⬜     |
 | 5        | `/security-deposits`        | Security Deposits list    | ⬜     |
 | 6        | `/security-deposits/add`    | Add Security Deposit      | ⬜     |
@@ -191,9 +191,9 @@ Build these routes in order:
 
 | Route                       | Page UI | API |
 | --------------------------- | ------- | --- |
-| `/referral`                 | ⬜      | ⬜  |
-| `/commission/performance`   | ⬜      | ⬜  |
-| `/commission/details`       | ⬜      | ⬜  |
+| `/referral`                 | ✅      | ✅  |
+| `/commission/performance`   | ✅      | ✅  |
+| `/commission/details`       | ✅      | ✅  |
 | `/transactions/:id`         | ⬜      | ✅  |
 | `/security-deposits`        | ⬜      | ⬜  |
 | `/security-deposits/add`    | ⬜      | ⬜  |
