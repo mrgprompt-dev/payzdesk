@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -19,14 +19,44 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
-export default function LoginPage() {
+function getSafeRedirect(value: string | null) {
+  if (!value || !value.startsWith('/') || value.startsWith('//')) {
+    return '/'
+  }
+
+  return value
+}
+
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') || '/'
+  const redirect = getSafeRedirect(searchParams.get('redirect'))
   const { fetchMe } = useAuthStore()
 
   const [showPwd, setShowPwd] = useState(false)
   const [serverError, setServerError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function restoreSession() {
+      try {
+        await apiClient.post('/auth/refresh')
+        await fetchMe()
+        if (!cancelled) {
+          router.replace(redirect)
+        }
+      } catch {
+        // No valid refresh session; keep showing the login form.
+      }
+    }
+
+    restoreSession()
+
+    return () => {
+      cancelled = true
+    }
+  }, [fetchMe, redirect, router])
 
   const {
     register,
@@ -182,5 +212,13 @@ export default function LoginPage() {
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }

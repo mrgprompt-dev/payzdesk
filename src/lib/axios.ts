@@ -28,8 +28,20 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+    const requestUrl = originalRequest?.url ?? ''
+    const isPublicAuthRequest =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/register') ||
+      requestUrl.includes('/auth/forgot-password') ||
+      requestUrl.includes('/auth/otp/') ||
+      requestUrl.includes('/auth/refresh') ||
+      requestUrl.includes('/auth/logout')
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isPublicAuthRequest
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })

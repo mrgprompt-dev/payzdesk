@@ -1,6 +1,6 @@
 # PayzDesk — Progress Summary
 
-**Last updated:** 2026-05-27 (Phase 2 ✅ COMPLETE)
+**Last updated:** 2026-05-27 (Phase 3 ✅ COMPLETE)
 **Stack:** Next.js 16 · TypeScript · Tailwind v4 · App Router
 
 ---
@@ -68,7 +68,7 @@ All 13 routes built:
 | 12       | `/reports/adjustments`      | Adjustment Transactions   | ✅     |
 | 13       | `/tiers`                    | Tier Benefits             | ✅     |
 
-### Phase 3 — Real-time & Support (CURRENT TARGET)
+### Phase 3 — Real-time & Support ✅ COMPLETE
 
 #### Step 3.1 — Static Help Pages
 | Route              | Screen                        | Status |
@@ -89,7 +89,7 @@ All 13 routes built:
 #### Step 3.4 — Live Pool
 | Route              | Screen                        | Status |
 | ------------------ | ----------------------------- | ------ |
-| `/live-pool`       | Live Withdrawal Pool (Pusher) | ⬜     |
+| `/live-pool`       | Live Withdrawal Pool (Pusher) | ✅     |
 
 *New model needed:* `LivePoolJob` (jobId, transactionId, amount, bankId, status: available/grabbed/expired, grabbedBy, expiresAt).
 *Pusher events:* `job.available`, `job.grabbed`, `job.expired` broadcast to all agents on channel `live-pool`.
@@ -193,6 +193,14 @@ All 13 routes built:
 - Types updated: ITransaction now includes all 4 types + 6 statuses + referenceId/notes; ITier, TiersResponse, FinanceReportSummary, IAdjustment, AdjustmentsResponse added
 - All pages use apiClient (axios with token refresh), formatINR/formatDateTime from @/utils
 
+### Phase 3: Real-time & Support ✅
+
+- Models: SupportTicket, LivePoolJob
+- API: support tickets (GET list, POST create), live pool (GET available, POST grab, POST spawn test)
+- Infrastructure: Pusher server & client configured for real-time WebSocket events (`job.available`, `job.grabbed`, `job.expired`)
+- Pages: help/faq, help/tutorial, support (form + ticket history), deposit/payment (bank details + UTR split screen)
+- Pages: live-pool (real-time feed + countdown timers + instant UI updates via TanStack Query)
+
 ---
 
 ## Route Checklist
@@ -235,11 +243,11 @@ All 13 routes built:
 | `/reports/adjustments`      | ✅      | ✅  |
 | `/tiers`                    | ✅      | ✅  |
 
-### Phase 3 (To Build)
+### Phase 3 (Complete)
 
 | Route              | Page UI | API |
 | ------------------ | ------- | --- |
-| `/live-pool`       | ⬜      | ⬜  |
+| `/live-pool`       | ✅      | ✅  |
 | `/deposit/payment` | ✅      | —   |
 | `/help/faq`        | ✅      | —   |
 | `/help/tutorial`   | ✅      | —   |
@@ -249,7 +257,7 @@ All 13 routes built:
 
 ---
 
-## Data Models — Phase 2 (All Created ✅)
+## Data Models (All Created ✅)
 
 | Model                    | Fields                                                                  | Used by                       | Status |
 | ------------------------ | ----------------------------------------------------------------------- | ----------------------------- | ------ |
@@ -258,6 +266,8 @@ All 13 routes built:
 | `PerformanceCommission`  | userId (unique), totalEarned, status, lastReleasedDate, frequencyDays, activePrograms[] | `/api/commission/performance` | ✅ |
 | `Adjustment`             | userId, type (credit/debit), amount, description, referenceId           | `/api/reports/adjustments`    | ✅     |
 | `Transaction` (extended) | Added `security_deposit`/`security_withdrawal` types, `referenceId`, `notes` | Security deposits/withdrawals | ✅ |
+| `SupportTicket`          | userId, subject, message, status                                        | `/api/support`                | ✅     |
+| `LivePoolJob`            | transactionId, amount, bankId, status, grabbedBy, expiresAt             | `/api/live-pool`              | ✅     |
 
 Referral fields (commissionEarned, referralCode, referredBy) exist on the User model.
 Tiers are static config in `/api/tiers/route.ts` — no DB model needed.

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyAccessToken, ACCESS_COOKIE } from '@/lib/auth'
+import { ACCESS_COOKIE, verifyAccessToken } from '@/lib/auth'
 
 // Public routes that don't require authentication
 const PUBLIC_PATHS = [
@@ -22,7 +22,7 @@ const PUBLIC_API_PATHS = [
 ]
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
+  const { pathname, search } = req.nextUrl
 
   // Allow public API routes
   if (PUBLIC_API_PATHS.some((p) => pathname.startsWith(p))) {
@@ -68,7 +68,7 @@ export function middleware(req: NextRequest) {
       )
     }
     const loginUrl = new URL('/login', req.url)
-    loginUrl.searchParams.set('redirect', pathname)
+    loginUrl.searchParams.set('redirect', `${pathname}${search}`)
     return NextResponse.redirect(loginUrl)
   }
 
