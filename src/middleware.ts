@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ACCESS_COOKIE, verifyAccessToken } from '@/lib/auth'
+import { jwtVerify } from 'jose'
+
+const ACCESS_COOKIE = 'accessToken'
 
 // Public routes that don't require authentication
 const PUBLIC_PATHS = [
@@ -21,7 +23,7 @@ const PUBLIC_API_PATHS = [
   '/api/health',
 ]
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
   // Allow public API routes
@@ -45,7 +47,8 @@ export function middleware(req: NextRequest) {
   let isValidToken = false
   if (token) {
     try {
-      verifyAccessToken(token)
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET as string)
+      await jwtVerify(token, secret)
       isValidToken = true
     } catch {
       isValidToken = false
