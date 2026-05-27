@@ -70,13 +70,29 @@ All 13 routes built:
 
 ### Phase 3 — Real-time & Support (CURRENT TARGET)
 
-| Priority | Route              | Screen                        | Status |
-| -------- | ------------------ | ----------------------------- | ------ |
-| 1        | `/live-pool`       | Live Withdrawal Pool (Pusher) | ⬜     |
-| 2        | `/deposit/payment` | Deposit Payment Confirmation  | ⬜     |
-| 3        | `/help/faq`        | FAQ                           | ⬜     |
-| 4        | `/help/tutorial`   | Tutorial                      | ⬜     |
-| 5        | `/support`         | Customer Support Chat         | ⬜     |
+#### Step 3.1 — Static Help Pages
+| Route              | Screen                        | Status |
+| ------------------ | ----------------------------- | ------ |
+| `/help/faq`        | FAQ                           | ✅     |
+| `/help/tutorial`   | Tutorial / How-to Guides      | ✅     |
+
+#### Step 3.2 — Deposit Payment Flow
+| Route              | Screen                        | Status |
+| ------------------ | ----------------------------- | ------ |
+| `/deposit/payment` | Payment Confirmation          | ✅     |
+
+#### Step 3.3 — Customer Support
+| Route              | Screen                        | Status |
+| ------------------ | ----------------------------- | ------ |
+| `/support`         | Support Chat or Contact Form  | ✅     |
+
+#### Step 3.4 — Live Pool
+| Route              | Screen                        | Status |
+| ------------------ | ----------------------------- | ------ |
+| `/live-pool`       | Live Withdrawal Pool (Pusher) | ⬜     |
+
+*New model needed:* `LivePoolJob` (jobId, transactionId, amount, bankId, status: available/grabbed/expired, grabbedBy, expiresAt).
+*Pusher events:* `job.available`, `job.grabbed`, `job.expired` broadcast to all agents on channel `live-pool`.
 
 ---
 
@@ -224,10 +240,10 @@ All 13 routes built:
 | Route              | Page UI | API |
 | ------------------ | ------- | --- |
 | `/live-pool`       | ⬜      | ⬜  |
-| `/deposit/payment` | ⬜      | ⬜  |
-| `/help/faq`        | ⬜      | ⬜  |
-| `/help/tutorial`   | ⬜      | ⬜  |
-| `/support`         | ⬜      | ⬜  |
+| `/deposit/payment` | ✅      | —   |
+| `/help/faq`        | ✅      | —   |
+| `/help/tutorial`   | ✅      | —   |
+| `/support`         | ✅      | ✅  |
 
 ✅ = done · ⬜ = to build
 

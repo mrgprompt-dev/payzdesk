@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -25,9 +26,10 @@ async function fetchActiveBanks(): Promise<IBankAccount[]> {
 export default function AddSecurityDepositPage() {
   const router = useRouter()
 
-  const [banks, setBanks]           = useState<IBankAccount[]>([])
-  const [banksLoading, setBanksLoading] = useState(true)
-  const [banksError, setBanksError] = useState(false)
+  const { data: banks = [], isLoading: banksLoading, isError: banksError } = useQuery<IBankAccount[]>({
+    queryKey: ['activeBanks'],
+    queryFn: fetchActiveBanks,
+  })
 
   const [bankId, setBankId]   = useState('')
   const [amount, setAmount]   = useState('')
@@ -36,12 +38,7 @@ export default function AddSecurityDepositPage() {
   const [success, setSuccess] = useState(false)
   const [errors, setErrors]   = useState<{ bankId?: string; amount?: string; general?: string }>({})
 
-  useEffect(() => {
-    fetchActiveBanks()
-      .then(setBanks)
-      .catch(() => setBanksError(true))
-      .finally(() => setBanksLoading(false))
-  }, [])
+
 
   const canSubmit = bankId !== '' && amount !== '' && !loading
 

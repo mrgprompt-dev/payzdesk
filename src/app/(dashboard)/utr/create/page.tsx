@@ -18,7 +18,8 @@
  *   [    Cancel      ]   ← red pill button
  */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronDown, Hash, IndianRupee, AlertCircle, CheckCircle2 } from 'lucide-react'
@@ -123,22 +124,17 @@ function InputWithSuffix({
 export default function CreateUTRPage() {
   const router = useRouter()
 
-  const [banks, setBanks]           = useState<IBankAccount[]>([])
-  const [banksLoading, setBanksLoading] = useState(true)
-  const [banksError, setBanksError] = useState(false)
+  const { data: banks = [], isLoading: banksLoading, isError: banksError } = useQuery<IBankAccount[]>({
+    queryKey: ['activeBanks'],
+    queryFn: fetchActiveBanks,
+  })
 
   const [form, setForm]             = useState<FormState>({ bankId: '', utrNumber: '', amount: '' })
   const [errors, setErrors]         = useState<Partial<FormState & { general: string }>>({})
   const [loading, setLoading]       = useState(false)
   const [success, setSuccess]       = useState(false)
 
-  // Load active banks on mount
-  useEffect(() => {
-    fetchActiveBanks()
-      .then(setBanks)
-      .catch(() => setBanksError(true))
-      .finally(() => setBanksLoading(false))
-  }, [])
+
 
   function set(field: keyof FormState, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))

@@ -11,14 +11,13 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import type { IBankAccount } from '@/types'
+import { apiClient } from '@/lib/axios'
 
 // ─── Fetch active banks ───────────────────────────────────────────────────────
 
 async function fetchActiveBanks(): Promise<IBankAccount[]> {
-  const res = await fetch('/api/banks')
-  if (!res.ok) throw new Error('Failed to fetch banks')
-  const json = await res.json()
-  return (json.data ?? []).filter((b: IBankAccount) => b.status === 'active')
+  const res = await apiClient.get('/banks')
+  return (res.data.data ?? []).filter((b: IBankAccount) => b.status === 'active')
 }
 
 // ─── Main page ────────────────────────────────────────────────────────────────
@@ -59,46 +58,7 @@ export default function DepositPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!canSubmit || !validate()) return
-    setLoading(true)
-    setErrors({})
-
-    try {
-      const body: Record<string, unknown> = { bankId, amount: parseFloat(amount) }
-      if (utrNum.trim()) body.utrNumber = utrNum.trim().toUpperCase()
-
-      const res = await fetch('/api/transactions/deposit', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(body),
-      })
-      const json = await res.json()
-
-      if (!res.ok || !json.success) {
-        setErrors({ general: json.message ?? 'Failed to submit deposit' })
-        return
-      }
-      setSuccess(true)
-      setTimeout(() => router.replace('/deposits'), 1800)
-    } catch {
-      setErrors({ general: 'Network error. Please try again.' })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // ── Success ───────────────────────────────────────────────────────────────
-
-  if (success) {
-    return (
-      <div className="page-card flex flex-col items-center gap-4 text-center py-10 animate-[fadeIn_200ms_ease-out]">
-        <CheckCircle2 className="w-14 h-14 text-green" />
-        <div>
-          <p className="text-lg font-bold text-primary">Deposit Submitted!</p>
-          <p className="text-sm text-secondary mt-2">Your request is pending processing.</p>
-        </div>
-        <p className="text-[13px] text-muted">Redirecting to Deposit Requests…</p>
-      </div>
-    )
+    router.push(`/deposit/payment?bankId=${bankId}&amount=${amount}`)
   }
 
   return (
@@ -191,18 +151,7 @@ export default function DepositPage() {
         {errors.amount && <p className="field-error">{errors.amount}</p>}
       </div>
 
-      {/* ── UTR NUMBER (optional) ────────────────────────────────────────── */}
-      <div className="page-card flex flex-col gap-2">
-        <p className="section-label">UTR NUMBER <span className="text-muted normal-case font-normal">(optional)</span></p>
-        <input
-          id="deposit-utr"
-          type="text"
-          placeholder="Paste UTR / transaction reference"
-          value={utrNum}
-          onChange={(e) => setUtrNum(e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase())}
-          className="form-input"
-        />
-      </div>
+
 
       {/* General error */}
       {errors.general && (
@@ -219,7 +168,7 @@ export default function DepositPage() {
         className="btn-primary"
         style={{ opacity: canSubmit ? 1 : 0.45, cursor: canSubmit ? 'pointer' : 'not-allowed' }}
       >
-        {loading ? 'Submitting…' : 'Submit Deposit Request'}
+        {loading ? 'Processing…' : 'Next'}
       </button>
 
       {/* Cancel */}
