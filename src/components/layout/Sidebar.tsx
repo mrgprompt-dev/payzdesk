@@ -10,7 +10,6 @@ import {
   Building2,
   FileText,
   Settings,
-  User,
   ChevronDown,
   LogOut,
   Menu,
@@ -325,13 +324,15 @@ export function MobileHeader() {
         {/* Deposit CTA — green pill, right */}
         <Link
           href="/deposit"
-          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-white"
+          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
           style={{
-            background: 'linear-gradient(145deg, var(--accent-green-light), var(--accent-green))',
+            background: 'linear-gradient(145deg, var(--accent-blue-light), var(--accent-blue))',
+            boxShadow: '0 4px 10px var(--accent-blue-dim)',
+            color: '#f8fbff',
             touchAction: 'manipulation',
           }}
         >
-          <ArrowDownToLine className="h-3.5 w-3.5" />
+          <ArrowDownToLine className="h-3.5 w-3.5" style={{ color: '#f8fbff' }} />
           Deposit
         </Link>
       </header>
@@ -349,7 +350,7 @@ export function MobileHeader() {
       {/* ── Drawer (~85% screen width, slides from left) ── */}
       <div
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex flex-col shadow-2xl transition-transform duration-[280ms] ease-out md:hidden',
+          'fixed inset-y-0 left-0 z-50 flex flex-col shadow-2xl transition-transform duration-280 ease-out md:hidden',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
         style={{

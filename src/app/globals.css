@@ -165,58 +165,72 @@
    Maps our CSS variables into Tailwind utility classes.
    e.g. bg-page, bg-card, text-primary, border-default, etc.
    ════════════════════════════════════════════════════════════════════════════ */
-@theme {
+/*
+  Tailwind v4 @theme — STATIC values only.
+  Tailwind v4 cannot resolve var() references at build time inside @theme.
+  These must be literal values. They match the :root CSS vars above exactly.
+  Tailwind generates utility classes from these: bg-card, text-primary, etc.
+  The :root vars still exist for direct CSS usage (style={{ color: 'var(--accent-gold)' }}).
+*/
+@theme inline {
   /* Backgrounds */
-  --color-page:           var(--bg-page);
-  --color-card:           var(--bg-card);
-  --color-card-hover:     var(--bg-card-hover);
-  --color-input:          var(--bg-input);
-  --color-input-focus:    var(--bg-input-focus);
-  --color-sidebar:        var(--bg-sidebar);
+  --color-page:           #060a16;
+  --color-card:           rgba(16, 24, 40, 0.70);
+  --color-card-solid:     #101828;
+  --color-card-hover:     rgba(22, 32, 53, 0.80);
+  --color-input:          rgba(20, 29, 46, 0.60);
+  --color-input-focus:    rgba(26, 38, 64, 0.80);
+  --color-sidebar:        #090e1b;
+  --color-overlay:        rgba(0, 0, 0, 0.70);
+  --color-skeleton:       #1a2437;
 
   /* Borders */
-  --color-border:         var(--border-default);
-  --color-border-subtle:  var(--border-subtle);
-  --color-border-strong:  var(--border-strong);
-  --color-border-focus:   var(--border-focus);
+  --color-border:         rgba(255, 255, 255, 0.08);
+  --color-border-subtle:  rgba(255, 255, 255, 0.04);
+  --color-border-strong:  rgba(255, 255, 255, 0.15);
+  --color-border-focus:   #f5a623;
 
   /* Text */
-  --color-primary:        var(--text-primary);
-  --color-secondary:      var(--text-secondary);
-  --color-muted:          var(--text-muted);
+  --color-primary:        #f8fafc;
+  --color-secondary:      #94a3b8;
+  --color-muted:          #64748b;
+  --color-inverted:       #080e1c;
 
   /* Accents */
-  --color-gold:           var(--accent-gold);
-  --color-gold-light:     var(--accent-gold-light);
-  --color-gold-dim:       var(--accent-gold-dim);
-  --color-green:          var(--accent-green);
-  --color-green-light:    var(--accent-green-light);
-  --color-green-dim:      var(--accent-green-dim);
-  --color-blue:           var(--accent-blue);
-  --color-blue-dim:       var(--accent-blue-dim);
-  --color-danger:         var(--accent-red);
-  --color-danger-light:   var(--accent-red-light);
-  --color-danger-dim:     var(--accent-red-dim);
-  --color-warning:        var(--accent-amber);
-  --color-warning-dim:    var(--accent-amber-dim);
+  --color-gold:           #f5a623;
+  --color-gold-light:     #fbbf24;
+  --color-gold-dim:       rgba(245, 166, 35, 0.15);
+  --color-green:          #16a34a;
+  --color-green-light:    #22c55e;
+  --color-green-dim:      rgba(22, 163, 74, 0.15);
+  --color-blue:           #3b82f6;
+  --color-blue-light:     #60a5fa;
+  --color-blue-dim:       rgba(59, 130, 246, 0.15);
+  --color-danger:         #ef4444;
+  --color-danger-light:   #f87171;
+  --color-danger-dim:     rgba(239, 68, 68, 0.15);
+  --color-warning:        #f59e0b;
+  --color-warning-dim:    rgba(245, 158, 11, 0.15);
+  --color-amber:          #f59e0b;
 
-  /* Radius */
-  --radius-sm:   var(--radius-sm);
-  --radius-md:   var(--radius-md);
-  --radius-lg:   var(--radius-lg);
-  --radius-xl:   var(--radius-xl);
+  /* Status */
+  --color-status-pending:   #f59e0b;
+  --color-status-completed: #22c55e;
+  --color-status-failed:    #f87171;
+  --color-status-disputed:  #fb923c;
+
+  /* Radius — Tailwind uses these for rounded-* utilities */
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   18px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
    Base / Reset
    ════════════════════════════════════════════════════════════════════════════ */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+
 
 html {
   height: 100%;
@@ -227,7 +241,7 @@ html {
 
 body {
   min-height: 100%;
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   background-color: var(--bg-page);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;

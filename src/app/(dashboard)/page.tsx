@@ -27,9 +27,9 @@ import type { ITransaction, IBankAccount } from '@/types'
 
 function SkeletonCard() {
   return (
-    <div className="rounded-[14px] border border-border bg-card p-4 space-y-3">
-      <div className="skeleton h-[42px] w-[140px] rounded-full bg-(--bg-skeleton) border border-border-subtle" />
-      <div className="skeleton h-[42px] w-[42px] rounded-full bg-(--bg-skeleton) border border-border-subtle shrink-0" />
+    <div className="rounded-md border border-border bg-card p-4 space-y-3">
+      <div className="skeleton h-10 w-36 rounded-full" />
+      <div className="skeleton h-6 w-24 rounded" />
     </div>
   )
 }
@@ -46,7 +46,7 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, iconColor, label, value, valueColor }: StatCardProps) {
   return (
-    <div className="rounded-[14px] border border-border bg-card backdrop-blur-md p-[14px] flex flex-col gap-1.5">
+    <div className="rounded-md border border-border bg-card backdrop-blur-md p-[14px] flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
         <Icon className="h-[14px] w-[14px] shrink-0" style={{ color: iconColor }} />
         <span className="text-[12px] text-muted leading-tight">{label}</span>
@@ -119,7 +119,7 @@ async function fetchTxns(type: 'deposit' | 'withdrawal'): Promise<PopulatedTxn[]
   const res = await fetch(`/api/transactions?type=${type}`)
   if (!res.ok) return []
   const json = await res.json()
-  return (json.data ?? []).slice(0, 3) // show max 3 inline
+  return (json.data ?? []).slice(0, 3)
 }
 
 function InlineList({
@@ -142,17 +142,20 @@ function InlineList({
   })
 
   return (
-    <div className="rounded-[14px] border border-border bg-card backdrop-blur-md overflow-hidden">
+    <div className="rounded-md border border-border bg-card backdrop-blur-md overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3.5 border-b border-border-subtle">
         <p className="text-[13px] font-bold uppercase tracking-wider text-primary">{title}</p>
-        <Link href={viewAllHref} className="text-[12px] font-semibold text-gold hover:text-gold-light transition-colors">
+        <Link
+          href={viewAllHref}
+          className="text-[12px] font-semibold text-gold hover:text-gold-light transition-colors"
+        >
           View all
         </Link>
       </div>
 
       {isLoading && (
         <div className="flex flex-col gap-2 p-4">
-          {[1,2].map(i => <div key={i} className="skeleton h-10 rounded-[10px]" />)}
+          {[1, 2].map(i => <div key={i} className="skeleton h-10 rounded-sm" />)}
         </div>
       )}
 
@@ -185,15 +188,13 @@ function InlineList({
 export default function DashboardPage() {
   const { user, isLoading, fetchMe } = useAuthStore()
 
-  // Hydrate user on mount if not already loaded
   useEffect(() => {
     if (!user) fetchMe()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Loading skeleton ──
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 animate-[fadeIn_200ms_ease-out]">
+      <div className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-3">
           {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
@@ -206,20 +207,20 @@ export default function DashboardPage() {
   const fmt = (n: number) => formatINR(n)
 
   return (
-    <div className="flex flex-col gap-4 animate-[fadeIn_200ms_ease-out]">
+    <div className="flex flex-col gap-4">
 
       {/* ══════════════════════════════════════════
           OVERVIEW CARD
-          ══════════════════════════════════════════ */}
-      <div className="rounded-[14px] border border-border bg-card backdrop-blur-md overflow-hidden">
+      ══════════════════════════════════════════ */}
+      <div className="rounded-md border border-border bg-card backdrop-blur-md overflow-hidden">
 
-        {/* Header row — OVERVIEW label + pill tabs */}
+        {/* Header row */}
         <div className="flex items-center justify-between px-4 pt-4 pb-3 gap-2 flex-wrap">
           <span className="text-[15px] font-bold text-primary tracking-wide">OVERVIEW</span>
           <div className="flex items-center gap-2">
             <Link
               href="/deposits"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-secondary transition-colors active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-secondary active:scale-95 transition-transform"
               style={{ background: 'rgba(255,255,255,0.06)' }}
             >
               <ArrowDownToLine className="h-3 w-3" />
@@ -227,7 +228,7 @@ export default function DashboardPage() {
             </Link>
             <Link
               href="/withdrawals"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-secondary transition-colors active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-secondary active:scale-95 transition-transform"
               style={{ background: 'rgba(255,255,255,0.06)' }}
             >
               <ArrowUpFromLine className="h-3 w-3" />
@@ -243,7 +244,6 @@ export default function DashboardPage() {
             iconColor="var(--accent-gold)"
             label="Net Balance"
             value={fmt(user?.netBalance ?? 0)}
-            valueColor="var(--text-primary)"
           />
           <StatCard
             icon={Wallet}
@@ -267,10 +267,10 @@ export default function DashboardPage() {
         </div>
 
         {/* Divider */}
-        <div className="h-px mx-4" style={{ background: 'var(--border-subtle)' }} />
+        <div className="h-px mx-4 bg-border-subtle" />
 
         {/* Bottom row — 3 mini stats */}
-        <div className="flex divide-x px-2" style={{ borderColor: 'var(--border-subtle)' }}>
+        <div className="flex divide-x divide-border-subtle px-2">
           <MiniStat
             icon={Building2}
             iconColor="var(--accent-amber)"
@@ -293,17 +293,18 @@ export default function DashboardPage() {
       </div>
 
       {/* ══════════════════════════════════════════
-          LIVE POOL CARD (locked state)
-          ══════════════════════════════════════════ */}
+          LIVE POOL CARD
+      ══════════════════════════════════════════ */}
       <div
-        className="rounded-[14px] border p-4 relative overflow-hidden"
+        className="rounded-md border p-4 relative overflow-hidden"
         style={{
           background: 'rgba(180, 120, 0, 0.18)',
           borderColor: 'var(--accent-gold)',
         }}
       >
         {/* LIVE badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-3 text-[11px] font-bold"
+        <div
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-3 text-[11px] font-bold"
           style={{ background: 'rgba(0,0,0,0.3)', color: 'var(--accent-gold)' }}
         >
           <Zap className="h-3 w-3 fill-current" />
@@ -312,13 +313,12 @@ export default function DashboardPage() {
 
         {/* Content + lock overlay */}
         <div className="relative">
-          <div className={user?.withdrawalEnabled ? "" : "blur-[2px] select-none pointer-events-none"}>
+          <div className={user?.withdrawalEnabled ? '' : 'blur-[2px] select-none pointer-events-none'}>
             <p className="text-[15px] font-bold text-primary mb-1">Earn Extra Commission</p>
             <p className="text-[13px] text-secondary leading-snug">
               GRAB a withdrawal request before someone else does!
             </p>
           </div>
-          {/* Lock icon centred over blurred content */}
           {!user?.withdrawalEnabled && (
             <div className="absolute inset-0 flex items-center justify-end pr-2">
               <Lock className="h-6 w-6" style={{ color: 'var(--accent-gold)' }} />
@@ -334,30 +334,27 @@ export default function DashboardPage() {
         {user?.withdrawalEnabled && <div className="mt-3 mb-3" />}
 
         <div className="flex items-center justify-between gap-3">
-          {/* Button */}
           <button
             disabled={!user?.withdrawalEnabled}
-            className={`flex-1 py-3 rounded-full text-[14px] font-bold flex items-center justify-center gap-2 ${
-              user?.withdrawalEnabled 
-                ? 'text-[#1a1000] active:scale-[0.98] transition-transform' 
-                : 'text-muted cursor-not-allowed'
+            className={`flex-1 py-3 rounded-full text-[14px] font-bold flex items-center justify-center gap-2 transition-transform ${
+              user?.withdrawalEnabled
+                ? 'active:scale-[0.98]'
+                : 'cursor-not-allowed'
             }`}
-            style={{ 
-              background: user?.withdrawalEnabled 
-                ? 'linear-gradient(145deg, var(--accent-gold-light), var(--accent-gold))' 
+            style={{
+              background: user?.withdrawalEnabled
+                ? 'linear-gradient(145deg, var(--accent-gold-light), var(--accent-gold))'
                 : 'var(--bg-input)',
-              boxShadow: user?.withdrawalEnabled ? '0 4px 12px var(--accent-gold-dim)' : 'none'
+              color: user?.withdrawalEnabled ? '#1a1000' : 'var(--text-muted)',
+              boxShadow: user?.withdrawalEnabled ? '0 4px 12px var(--accent-gold-dim)' : 'none',
             }}
           >
             Open Live Pool
             <ChevronRight className="h-4 w-4" />
           </button>
-
-          {/* How to use link */}
           <Link
             href="/help/faq"
-            className="text-[12px] font-semibold shrink-0"
-            style={{ color: 'var(--accent-gold)' }}
+            className="text-[12px] font-semibold shrink-0 text-gold"
           >
             How to use?
           </Link>
@@ -366,8 +363,8 @@ export default function DashboardPage() {
 
       {/* ══════════════════════════════════════════
           QUICK LINKS CARD
-          ══════════════════════════════════════════ */}
-      <div className="rounded-[14px] border border-border bg-card backdrop-blur-md p-4">
+      ══════════════════════════════════════════ */}
+      <div className="rounded-md border border-border bg-card backdrop-blur-md p-4">
         <p className="text-[15px] font-bold text-primary mb-4">Quick Links</p>
 
         <div className="flex justify-around mb-4">
@@ -380,7 +377,7 @@ export default function DashboardPage() {
           <QuickLink
             icon={ArrowDownToLine}
             iconColor="var(--accent-blue)"
-            label="Total Banks"
+            label="Deposit Requests"
             href="/deposits"
           />
           <QuickLink
@@ -400,7 +397,7 @@ export default function DashboardPage() {
         {/* Referral strip */}
         <Link
           href="/referral"
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold transition-opacity active:opacity-75"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-[12px] font-semibold active:opacity-75 transition-opacity"
           style={{
             background: 'var(--accent-blue-dim)',
             color: 'var(--accent-blue-light)',
@@ -414,11 +411,11 @@ export default function DashboardPage() {
       </div>
 
       {/* ══════════════════════════════════════════
-          CUSTOMER SUPPORT — standalone pill button
-          ══════════════════════════════════════════ */}
+          CUSTOMER SUPPORT
+      ══════════════════════════════════════════ */}
       <Link
         href="/support"
-        className="flex items-center justify-center gap-2.5 w-full py-4 rounded-full text-[15px] font-bold text-white transition-opacity active:opacity-80"
+        className="flex items-center justify-center gap-2.5 w-full py-4 rounded-full text-[15px] font-bold text-white active:opacity-80 transition-opacity"
         style={{
           background: 'linear-gradient(145deg, var(--accent-blue-light), var(--accent-blue))',
         }}
@@ -429,7 +426,7 @@ export default function DashboardPage() {
 
       {/* ══════════════════════════════════════════
           INLINE DEPOSIT REQUESTS LIST
-          ══════════════════════════════════════════ */}
+      ══════════════════════════════════════════ */}
       <InlineList
         type="deposit"
         title="Deposit Requests"
@@ -440,7 +437,7 @@ export default function DashboardPage() {
 
       {/* ══════════════════════════════════════════
           INLINE WITHDRAWAL REQUESTS LIST
-          ══════════════════════════════════════════ */}
+      ══════════════════════════════════════════ */}
       <InlineList
         type="withdrawal"
         title="Withdrawal Requests"
