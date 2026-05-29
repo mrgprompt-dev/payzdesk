@@ -137,10 +137,11 @@ export default function SecurityDepositsPage() {
         <h1 className="text-lg font-bold text-primary">Security Deposits</h1>
         <Link
           href="/security-deposits/add"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold min-h-[44px] touch-manipulation whitespace-nowrap transition-transform active:scale-95 text-white"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold min-h-11 touch-manipulation whitespace-nowrap transition-transform active:scale-95"
           style={{
             background: 'linear-gradient(145deg, var(--accent-green-light), var(--accent-green))',
             boxShadow: '0 4px 12px var(--accent-green-dim)',
+            color : 'var(--text-primary)',
           }}
         >
           <Plus className="w-4 h-4" />

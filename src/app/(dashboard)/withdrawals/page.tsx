@@ -78,7 +78,7 @@ function TxnRow({ txn }: { txn: PopulatedTransaction }) {
       className="flex items-center gap-3 py-3.5 border-b border-border-subtle last:border-0 transition-colors hover:bg-[rgba(255,255,255,0.02)] cursor-pointer"
     >
       {/* Icon */}
-      <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-[rgba(245,158,11,0.08)] border border-[rgba(245,158,11,0.15)]">
+      <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-[rgba(245,158,11,0.08)] border border-warning-dim">
         <ArrowUpFromLine className="w-4 h-4 text-warning" />
       </div>
 
@@ -131,10 +131,11 @@ export default function WithdrawalsPage() {
         <h1 className="text-lg font-bold text-primary">Withdrawal Requests</h1>
         <Link
           href="/deposit"
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold min-h-[44px] touch-manipulation whitespace-nowrap transition-transform active:scale-95 text-[#1a1000]"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-bold min-h-11 touch-manipulation whitespace-nowrap transition-transform active:scale-95"
           style={{
             background: 'linear-gradient(145deg, var(--accent-gold-light), var(--accent-gold))',
             boxShadow:  '0 4px 12px var(--accent-gold-dim)',
+            color : 'var(--text-inverted)'
           }}
         >
           <ArrowUpFromLine className="w-4 h-4" />

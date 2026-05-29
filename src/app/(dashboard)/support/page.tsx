@@ -19,7 +19,7 @@ export default function SupportPage() {
   const { data: tickets = [], isLoading: loadingTickets, isError: ticketsError } = useQuery<ITicket[]>({
     queryKey: ['supportTickets'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/support')
+      const res = await apiClient.get('/support')
       return res.data.data ?? []
     },
   })
@@ -42,7 +42,7 @@ export default function SupportPage() {
     setSuccess(false)
 
     try {
-      const res = await apiClient.post('/api/support', {
+      const res = await apiClient.post('/support', {
         subject: subject.trim(),
         message: message.trim(),
       })
