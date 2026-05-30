@@ -64,3 +64,44 @@ export async function checkOTPRateLimit(
   await redis.setex(key, OTP_RATE_TTL_SECONDS, '1')
   return true
 }
+
+// ─── Admin login rate limiter ─────────────────────────────────────────────────
+
+const ADMIN_LOGIN_MAX_ATTEMPTS = 5
+const ADMIN_LOGIN_WINDOW_SECONDS = 15 * 60 // 15 minutes
+
+function adminLoginKey(phone: string) {
+  return `admin_login_attempts:${phone}`
+}
+
+/**
+ * Check whether an admin login attempt is allowed.
+ * Returns `{ allowed: true, remaining }` or `{ allowed: false, retryAfterSeconds }`.
+ */
+export async function checkAdminLoginRateLimit(phone: string): Promise<
+  | { allowed: true; remaining: number }
+  | { allowed: false; retryAfterSeconds: number }
+> {
+  const key = adminLoginKey(phone)
+  const attempts = (await redis.get<number>(key)) ?? 0
+
+  if (attempts >= ADMIN_LOGIN_MAX_ATTEMPTS) {
+    const ttl = await redis.ttl(key)
+    return { allowed: false, retryAfterSeconds: ttl > 0 ? ttl : ADMIN_LOGIN_WINDOW_SECONDS }
+  }
+
+  // Increment and set/reset TTL
+  await redis.incr(key)
+  if (attempts === 0) {
+    await redis.expire(key, ADMIN_LOGIN_WINDOW_SECONDS)
+  }
+
+  return { allowed: true, remaining: ADMIN_LOGIN_MAX_ATTEMPTS - attempts - 1 }
+}
+
+/**
+ * Reset the admin login rate limit counter (call on successful login).
+ */
+export async function resetAdminLoginRateLimit(phone: string): Promise<void> {
+  await redis.del(adminLoginKey(phone))
+}

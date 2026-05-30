@@ -1,273 +1,324 @@
 # PayzDesk — Progress Summary
 
-**Last updated:** 2026-05-27 (Phase 3 ✅ COMPLETE)
+**Last updated:** 2026-05-30
 **Stack:** Next.js 16 · TypeScript · Tailwind v4 · App Router
 
 ---
 
 ## Project Goal
 
-Build **PayzDesk** — a complete web-based payment agent management platform — by converting the SuperPayz Android app into a mobile-first web app.
-
-### What we are building
-
-A feature-complete web replica of the SuperPayz Android APK, rebranded as PayzDesk, with:
-
-- Our own independent codebase (Next.js + TypeScript)
-- Our own backend (Next.js API routes)
-- Our own database (MongoDB Atlas)
-- Dark theme design system (deep navy + gold accent + green CTAs)
-- Mobile-first UI with hamburger drawer nav (no bottom tabs)
-
-### What we are changing from the reference app
-
-| Item            | SuperPayz (reference)      | PayzDesk                               |
-| --------------- | -------------------------- | -------------------------------------- |
-| Name & branding | SuperPayz                  | PayzDesk ("Payz" white + "Desk" gold)  |
-| Platform        | Android APK only           | Mobile-first web (any browser)         |
-| Auth            | Phone + device SIM         | Phone + SMS OTP (no device dependency) |
-| App Lock        | Device PIN / Face ID       | Session inactivity timeout             |
-| Native share    | Android share sheet        | Web Share API + copy to clipboard      |
-| Color theme     | Dark navy, amber/gold CTAs | Dark navy, gold accent, green CTAs     |
-| Some taglines   | Original SuperPayz copy    | Rewritten for PayzDesk brand voice     |
-| Referral prefix | SPZ…                       | PDK…                                   |
-
-### What stays exactly the same
-
-- All features and flows (deposits, withdrawals, UTR, banks, commissions, referral, live pool, reports, settings)
-- Navigation structure (side drawer with exact same item order)
-- Screen layouts and information hierarchy (matching screenshots)
-- Filter bar pattern (status dropdown + search + CLEAR + DATE)
-- Card/badge/button visual language
+Build **PayzDesk** — a web-based payment agent management platform — by converting the SuperPayz Android APK into a mobile-first web app with an independent codebase, backend, and database.
 
 ---
 
-## Build Phases
+## Foundation (Complete ✅)
 
-### Phase 1 — User App MVP ✅ COMPLETE
-
-All 15 core routes built: auth, dashboard, deposits, withdrawals, banks, UTR, settings, profile.
-
-### Phase 2 — Earnings & Reporting ✅ COMPLETE
-
-All 13 routes built:
-
-| Priority | Route                       | Screen                    | Status |
-| -------- | --------------------------- | ------------------------- | ------ |
-| 1        | `/referral`                 | Refer & Earn              | ✅     |
-| 2        | `/commission/performance`   | Performance Commission    | ✅     |
-| 3        | `/commission/details`       | Commission Details        | ✅     |
-| 4        | `/transactions/:id`         | Transaction Detail        | ✅     |
-| 5        | `/security-deposits`        | Security Deposits list    | ✅     |
-| 6        | `/security-deposits/add`    | Add Security Deposit      | ✅     |
-| 7        | `/security-deposits/:id`    | Security Deposit Detail   | ✅     |
-| 8        | `/security-withdrawals`     | Security Withdrawals list | ✅     |
-| 9        | `/security-withdrawals/add` | Add Security Withdrawal   | ✅     |
-| 10       | `/reports/finance`          | Finance Report            | ✅     |
-| 11       | `/reports/finance/info`     | Finance Report Info       | ✅     |
-| 12       | `/reports/adjustments`      | Adjustment Transactions   | ✅     |
-| 13       | `/tiers`                    | Tier Benefits             | ✅     |
-
-### Phase 3 — Real-time & Support ✅ COMPLETE
-
-#### Step 3.1 — Static Help Pages
-| Route              | Screen                        | Status |
-| ------------------ | ----------------------------- | ------ |
-| `/help/faq`        | FAQ                           | ✅     |
-| `/help/tutorial`   | Tutorial / How-to Guides      | ✅     |
-
-#### Step 3.2 — Deposit Payment Flow
-| Route              | Screen                        | Status |
-| ------------------ | ----------------------------- | ------ |
-| `/deposit/payment` | Payment Confirmation          | ✅     |
-
-#### Step 3.3 — Customer Support
-| Route              | Screen                        | Status |
-| ------------------ | ----------------------------- | ------ |
-| `/support`         | Support Chat or Contact Form  | ✅     |
-
-#### Step 3.4 — Live Pool
-| Route              | Screen                        | Status |
-| ------------------ | ----------------------------- | ------ |
-| `/live-pool`       | Live Withdrawal Pool (Pusher) | ✅     |
-
-*New model needed:* `LivePoolJob` (jobId, transactionId, amount, bankId, status: available/grabbed/expired, grabbedBy, expiresAt).
-*Pusher events:* `job.available`, `job.grabbed`, `job.expired` broadcast to all agents on channel `live-pool`.
-
----
-
-## Done
-
-### Bootstrap & deps
-
-- Next.js project with TypeScript, Tailwind, App Router
-- Packages: mongoose, axios, zustand, TanStack Query, react-hook-form, zod, jsonwebtoken, bcryptjs, upstash Redis, pusher, lucide-react, clsx, tailwind-merge
-
-### Project structure
-
-- Route groups: `(auth)`, `(dashboard)`, `api/*`
-- Empty `page.tsx` shells for all MVP routes
-- Placeholder folders: `store/`, `hooks/`, `components/shared/`
-
-### Foundation
-
-- `db.ts` — MongoDB singleton
-- `auth.ts` — JWT sign/verify
-- `redis.ts` — Redis client (OTP)
-- `axios.ts` — client + auth interceptors
-- `utils/index.ts` — `cn`, `formatINR`, `formatDate`
-- `types/index.ts` — User, BankAccount, Transaction, UTR
-- Models: User, BankAccount, Transaction, UTR
-
-### Design system & shell
-
-- `globals.css` — full dark theme token system (~800 lines); CSS vars + Tailwind v4 `@theme` bridge
-- UI primitives: Button, Input, Card, Badge, Spinner
+- Next.js App Router, TypeScript, Tailwind v4, Zustand, TanStack Query, React Hook Form + Zod, Axios
+- MongoDB (Mongoose), Upstash Redis (OTP/rate-limit), Pusher (WebSockets), MSG91 (SMS)
+- `db.ts`, `auth.ts`, `redis.ts`, `axios.ts`, `getAuthUser.ts`, `otp.ts`, `pusher.ts`
+- `globals.css` — full dark theme token system; CSS vars + Tailwind v4 `@theme` bridge
+- UI primitives: Button, Input, Card, Badge, Spinner, StatusBadge, FilterBar
 - `middleware.ts` — protects dashboard routes; `/api/auth` public
-- Design rule: Tailwind utility classes first; inline `style` only for CSS vars; no new custom classes unless justified
-
-### Auth (API & Pages) ✅
-
-- API: register, login, OTP send/verify, refresh, logout, me, forgot-password, change-password
-- Pages: `/login`, `/register`, `/forgot-password`, `/onboarding`
-- Zustand auth store, JWT cookies (accessToken + refreshToken)
-
-### App wiring ✅
-
-- Root layout with Inter font + QueryProvider
-- Dashboard layout: gradient bg, `min-h-[100dvh]`, `max-w-3xl` content column
-- Sidebar: desktop 260px sticky + mobile 52px header + 85vw slide-in drawer
-- Active state: 3px gold left border + gold dim bg tint
-- Nav order matches CONVERSION_SPEC §3 exactly
-
-### Banks feature ✅
-
-- BankAccount model with full schema (upiId, branch, address, phone, status, verified)
-- `getAuthUser.ts` — shared JWT helper for API handlers
-- API: list, add (+ OTP send), delete, verify-otp, resend-otp
-- Pages: bank list with masked account numbers + StatusBadge + delete; add bank two-step form with OTP
-
-### UTR feature ✅
-
-- UTR model with compound unique index (userId, utrNumber)
-- API: list (filtered), create (bank ownership + active check + duplicate guard)
-- FilterBar shared component (status dropdown + search + CLEAR + DATE range)
-- Pages: create UTR form (exact CONVERSION_SPEC §8 layout); UTR history with filters
-
-### Transactions feature ✅
-
-- Transaction model with all statuses including 'disputed'
-- API: list (filtered), deposit, withdrawal (4 business rules), single by ID
-- Pages: deposit list, withdrawal list, initiate deposit form
-
-### Dashboard ✅
-
-- Overview card: 4 metrics + 3 bank stat sub-cards
-- Live Pool card (locked/unlocked based on withdrawalEnabled)
-- Quick Links: 4 circle icons + referral banner strip + customer support button
-- Inline deposit + withdrawal lists (last 3 rows each)
-
-### Settings & Profile ✅
-
-- API: get settings, toggle withdrawal
-- Pages: settings (App Security + Withdrawal toggles + inset limit box), change password, profile (read-only + copyable referral code)
-
-### Security & Code Audit ✅
-
-- Session revocation: refresh checks User.isActive
-- Atomic transactions: $gte guards, rollback on failure
-- OTP: peekOTP / consumeOTP split (no premature burn)
-- Privacy: generic OTP success strings for login/reset
-
-### Phase 2: Referral & Commission ✅
-
-- Models: ReferralCycle, ReferralCommission, PerformanceCommission, Adjustment
-- API: referral stats (GET), performance commission (GET), commission details (GET), transaction detail (GET by ID)
-- API: security deposits (GET list, POST create), security withdrawals (GET list, POST create)
-- API: finance report (GET, aggregation with date filter), adjustments (GET, type + date filter), tiers (GET, static config + deposit aggregation)
-- Pages: referral (earnings card + cycle + WhatsApp/Share/FAQ + segmented tabs), performance commission (earnings + program cards), commission details (summary + history)
-- Pages: transaction detail (hero card + details + bank info + notes, supports all 4 transaction types)
-- Pages: security deposits list (filter bar + rows), add security deposit form, security withdrawals list, add security withdrawal form
-- Pages: finance report (date filter + net balance + deposits/withdrawals/security breakdown + wallet summary), finance report info (static explanations)
-- Pages: adjustments (FilterBar reuse + summary strip + credit/debit rows), tiers (current tier card + progress bar + tier benefit cards)
-- Types updated: ITransaction now includes all 4 types + 6 statuses + referenceId/notes; ITier, TiersResponse, FinanceReportSummary, IAdjustment, AdjustmentsResponse added
-- All pages use apiClient (axios with token refresh), formatINR/formatDateTime from @/utils
-
-### Phase 3: Real-time & Support ✅
-
-- Models: SupportTicket, LivePoolJob
-- API: support tickets (GET list, POST create), live pool (GET available, POST grab, POST spawn test)
-- Infrastructure: Pusher server & client configured for real-time WebSocket events (`job.available`, `job.grabbed`, `job.expired`)
-- Pages: help/faq, help/tutorial, support (form + ticket history), deposit/payment (bank details + UTR split screen)
-- Pages: live-pool (real-time feed + countdown timers + instant UI updates via TanStack Query)
+- Design rule: Tailwind utility classes first; inline `style` only for CSS vars; no new globals.css classes unless justified
 
 ---
 
-## Route Checklist
+## User App — All Phases Complete ✅
 
-### Phase 1 (Complete)
+### Phase 1 — MVP (15 routes) ✅
+Auth (login, register, forgot-password, onboarding), dashboard, deposit initiation, deposit/withdrawal lists, banks (list + add with OTP), UTR (create + history), settings (withdrawal toggle + change password), profile.
 
-| Route                       | Page UI | API |
-| --------------------------- | ------- | --- |
-| `/login`                    | ✅      | ✅  |
-| `/register`                 | ✅      | ✅  |
-| `/forgot-password`          | ✅      | ✅  |
-| `/onboarding`               | ✅      | —   |
-| `/` (dashboard)             | ✅      | ✅  |
-| `/deposit`                  | ✅      | ✅  |
-| `/deposits`                 | ✅      | ✅  |
-| `/withdrawals`              | ✅      | ✅  |
-| `/banks`                    | ✅      | ✅  |
-| `/banks/add`                | ✅      | ✅  |
-| `/settings`                 | ✅      | ✅  |
-| `/settings/change-password` | ✅      | ✅  |
-| `/profile`                  | ✅      | ✅  |
-| `/utr`                      | ✅      | ✅  |
-| `/utr/create`               | ✅      | ✅  |
+### Phase 2 — Earnings & Reporting (13 routes) ✅
+Referral, performance commission, commission details, transaction detail, security deposits (list + add + detail), security withdrawals (list + add), finance report + info, adjustments, tiers.
 
-### Phase 2 (Complete)
+### Phase 3 — Real-time & Support (5 routes) ✅
+FAQ, tutorial, deposit payment confirmation, support (form + ticket history), live pool (Pusher real-time job feed + grab).
 
-| Route                       | Page UI | API |
-| --------------------------- | ------- | --- |
-| `/referral`                 | ✅      | ✅  |
-| `/commission/performance`   | ✅      | ✅  |
-| `/commission/details`       | ✅      | ✅  |
-| `/transactions/:id`         | ✅      | ✅  |
-| `/security-deposits`        | ✅      | ✅  |
-| `/security-deposits/add`    | ✅      | ✅  |
-| `/security-deposits/:id`    | ✅      | ✅  |
-| `/security-withdrawals`     | ✅      | ✅  |
-| `/security-withdrawals/add` | ✅      | ✅  |
-| `/reports/finance`          | ✅      | ✅  |
-| `/reports/finance/info`     | ✅      | —   |
-| `/reports/adjustments`      | ✅      | ✅  |
-| `/tiers`                    | ✅      | ✅  |
+### User Route Checklist
 
-### Phase 3 (Complete)
+| Route | UI | API |
+|-------|----|-----|
+| `/login` | ✅ | ✅ |
+| `/register` | ✅ | ✅ |
+| `/forgot-password` | ✅ | ✅ |
+| `/onboarding` | ✅ | — |
+| `/` (dashboard) | ✅ | ✅ |
+| `/deposit` | ✅ | ✅ |
+| `/deposit/payment` | ✅ | — |
+| `/deposits` | ✅ | ✅ |
+| `/withdrawals` | ✅ | ✅ |
+| `/banks` | ✅ | ✅ |
+| `/banks/add` | ✅ | ✅ |
+| `/utr` | ✅ | ✅ |
+| `/utr/create` | ✅ | ✅ |
+| `/settings` | ✅ | ✅ |
+| `/settings/change-password` | ✅ | ✅ |
+| `/profile` | ✅ | ✅ |
+| `/referral` | ✅ | ✅ |
+| `/commission/performance` | ✅ | ✅ |
+| `/commission/details` | ✅ | ✅ |
+| `/transactions/:id` | ✅ | ✅ |
+| `/security-deposits` | ✅ | ✅ |
+| `/security-deposits/add` | ✅ | ✅ |
+| `/security-deposits/:id` | ✅ | ✅ |
+| `/security-withdrawals` | ✅ | ✅ |
+| `/security-withdrawals/add` | ✅ | ✅ |
+| `/reports/finance` | ✅ | ✅ |
+| `/reports/finance/info` | ✅ | — |
+| `/reports/adjustments` | ✅ | ✅ |
+| `/tiers` | ✅ | ✅ |
+| `/live-pool` | ✅ | ✅ |
+| `/help/faq` | ✅ | — |
+| `/help/tutorial` | ✅ | — |
+| `/support` | ✅ | ✅ |
 
-| Route              | Page UI | API |
-| ------------------ | ------- | --- |
-| `/live-pool`       | ✅      | ✅  |
-| `/deposit/payment` | ✅      | —   |
-| `/help/faq`        | ✅      | —   |
-| `/help/tutorial`   | ✅      | —   |
-| `/support`         | ✅      | ✅  |
+### Data Models (User Side)
 
-✅ = done · ⬜ = to build
+| Model | Key Fields | Status |
+|-------|-----------|--------|
+| `User` | phone, passwordHash, netBalance, commissionEarned, blockedDeposit, withdrawalHoldAmount, totalBanks, activeBanks, disputedWithdrawalAmount, withdrawalEnabled, maxWithdrawalPerTxn, referralCode, referredBy | ✅ |
+| `BankAccount` | userId, accountNumber, upiId, ifscCode, bankName, branch, address, phone, status, verified | ✅ |
+| `Transaction` | userId, type (deposit/withdrawal/security_deposit/security_withdrawal), amount, status, bankId, utrNumber, referenceId, notes | ✅ |
+| `UTR` | userId, bankId, utrNumber, amount, status — compound unique index (userId, utrNumber) | ✅ |
+| `ReferralCycle` | userId, startDate, endDate, amount, status | ✅ |
+| `ReferralCommission` | referrerId, referredUserId, cycleId, amount | ✅ |
+| `PerformanceCommission` | userId, totalEarned, status, lastReleasedDate, frequencyDays, activePrograms[] | ✅ |
+| `Adjustment` | userId, type (credit/debit), amount, description, referenceId | ✅ |
+| `SupportTicket` | userId, subject, message, status | ✅ |
+| `LivePoolJob` | transactionId, amount, bankId, status (available/grabbed/expired), grabbedBy, expiresAt | ✅ |
 
 ---
 
-## Data Models (All Created ✅)
+## Admin Panel — Build Plan
 
-| Model                    | Fields                                                                  | Used by                       | Status |
-| ------------------------ | ----------------------------------------------------------------------- | ----------------------------- | ------ |
-| `ReferralCycle`          | userId, startDate, endDate, amount, status                              | `/api/referral`               | ✅     |
-| `ReferralCommission`     | referrerId, referredUserId, cycleId, amount                             | `/api/referral`, `/api/commission/details` | ✅ |
-| `PerformanceCommission`  | userId (unique), totalEarned, status, lastReleasedDate, frequencyDays, activePrograms[] | `/api/commission/performance` | ✅ |
-| `Adjustment`             | userId, type (credit/debit), amount, description, referenceId           | `/api/reports/adjustments`    | ✅     |
-| `Transaction` (extended) | Added `security_deposit`/`security_withdrawal` types, `referenceId`, `notes` | Security deposits/withdrawals | ✅ |
-| `SupportTicket`          | userId, subject, message, status                                        | `/api/support`                | ✅     |
-| `LivePoolJob`            | transactionId, amount, bankId, status, grabbedBy, expiresAt             | `/api/live-pool`              | ✅     |
+### Architecture Decisions
 
-Referral fields (commissionEarned, referralCode, referredBy) exist on the User model.
-Tiers are static config in `/api/tiers/route.ts` — no DB model needed.
+| Decision | Choice | Reason |
+|----------|--------|--------|
+| Admin model | Separate `Admin` collection | Completely isolated from agents; no accidental role mixing |
+| Admin login URL | `/[adminKey]/login` where `adminKey` must match `ADMIN_SECRET_KEY` env var; mismatch → 404 | Security through obscurity + credential auth on top |
+| First admin | `scripts/seed-admin.ts` — one-time CLI script | No env phone hack needed; clean and explicit |
+| Admin JWT | Separate secret (`ADMIN_JWT_SECRET`), stored in `adminToken` cookie | Fully decoupled from agent auth |
+| Admin UI | Clean functional layouts, reuse existing components (Card, Badge, StatusBadge, FilterBar, Spinner) | No glassmorphic/gradient/transition effects; desktop-first |
+| Admin middleware | Separate from user middleware; checks `adminToken` cookie + role | All `/admin/*` routes and `/api/admin/*` protected |
+
+### Transaction Approval — Balance Logic (hardwired into all approval APIs)
+
+| Action | Balance Effect |
+|--------|---------------|
+| Deposit approved | `netBalance += amount` · `blockedDeposit -= amount` |
+| Deposit rejected | `blockedDeposit -= amount` |
+| Withdrawal approved | `withdrawalHoldAmount -= amount` |
+| Withdrawal rejected | `netBalance += amount` · `withdrawalHoldAmount -= amount` |
+
+---
+
+### Phase A1 — Foundation ✅
+*Admin model, auth, middleware, login page, sidebar, dashboard — all built and security-audited.*
+
+#### Step A1.1 — Admin Model, Seed Script & Auth
+- `src/models/Admin.ts` — `name`, `phone`, `passwordHash`, `isActive`, `createdAt`
+- `scripts/seed-admin.ts` — CLI script: prompts for name/phone/password, hashes, inserts into Admin collection; exits if admin already exists
+- `src/lib/adminAuth.ts` — `signAdminToken(id)`, `verifyAdminToken(token)` using `ADMIN_JWT_SECRET`
+- `src/lib/getAdminUser.ts` — shared helper: reads `adminToken` cookie, verifies, returns admin payload (used in all `/api/admin/*` handlers)
+- API routes:
+  - `POST /api/admin/auth/login` — phone + password → sets `adminToken` cookie
+  - `POST /api/admin/auth/logout` — clears `adminToken` cookie
+  - `GET /api/admin/auth/me` — returns current admin from cookie
+
+#### Step A1.2 — Admin Shell, Middleware & Dashboard
+- `src/middleware.ts` (update) — add `/admin/*` guard: checks `adminToken` cookie; redirect to `/${ADMIN_SECRET_KEY}/login` if missing
+- `src/app/[adminKey]/login/page.tsx` — middleware validates key segment matches env var before rendering; simple phone + password form
+- `src/app/(admin)/layout.tsx` — fixed left sidebar (desktop-first, no mobile drawer), admin nav, logout
+- `src/app/(admin)/admin/page.tsx` — dashboard: 6 stat cards (total agents, pending deposits, pending withdrawals, pending UTRs, open support tickets, active live pool jobs)
+- `GET /api/admin/stats` — aggregated counts for dashboard
+
+**Routes:** `/[adminKey]/login` · `/admin`
+
+---
+
+### Phase A2 — Core Operations ⬜
+*The bread and butter — what admin needs daily to operate the platform.*
+
+#### Step A2.1 — Agent Management
+- Agent list: table with phone, name, balance, status, join date; search by phone/name; filter by active/inactive
+- Agent detail: profile card, balance breakdown (netBalance, blockedDeposit, withdrawalHoldAmount, commissionEarned), bank accounts list, last 10 transactions
+- Actions on detail page: toggle active/inactive, override `maxWithdrawalPerTxn`
+- APIs:
+  - `GET /api/admin/agents` — paginated list, search + status filter
+  - `GET /api/admin/agents/[id]` — full agent detail with populated banks + recent transactions
+  - `PATCH /api/admin/agents/[id]` — `isActive` toggle, `maxWithdrawalPerTxn` update
+
+**Routes:** `/admin/agents` · `/admin/agents/[id]`
+
+#### Step A2.2 — Transaction Approval
+- Pending deposits queue: sorted oldest-first; each row shows agent phone, amount, bank, submitted date; inline Approve / Reject buttons; reject opens a note input
+- Pending withdrawals queue: same pattern
+- All transactions view: full cross-agent history; filters: type, status, agent search, date range (reuse FilterBar)
+- Transaction detail: all fields + approve/reject action if still pending; shows balance effect preview
+- APIs:
+  - `GET /api/admin/transactions` — all transactions, all filters, pagination
+  - `GET /api/admin/transactions/[id]` — single transaction + agent info
+  - `PATCH /api/admin/transactions/[id]` — `approve` or `reject` (+ optional note); triggers balance update atomically
+
+**Routes:** `/admin/transactions` · `/admin/transactions/[id]`
+
+#### Step A2.3 — Bank Account Approval
+- All bank accounts across all agents: filter by status (pending/active/inactive/rejected); search by agent phone or account number
+- Pending accounts surfaced at top; Approve / Reject inline
+- Approved accounts can be deactivated; inactive accounts can be reactivated
+- APIs:
+  - `GET /api/admin/banks` — all banks, status filter, agent search
+  - `PATCH /api/admin/banks/[id]` — `approve`, `reject`, `activate`, `deactivate`
+
+**Routes:** `/admin/banks`
+
+---
+
+### Phase A3 — UTR & Security ⬜
+
+#### Step A3.1 — UTR Verification
+- Pending UTR queue: UTR number, amount, agent, bank name, submitted date; Verify / Reject inline; reject requires reason
+- Full UTR history: status filter + agent search + date range (reuse FilterBar)
+- APIs:
+  - `GET /api/admin/utr` — all UTRs, filters
+  - `PATCH /api/admin/utr/[id]` — `verify` or `reject` (+ reason stored in notes field)
+
+**Routes:** `/admin/utr`
+
+#### Step A3.2 — Security Operations
+- Security deposits list (all agents): pending ones at top; Approve / Reject inline
+- Security withdrawals list (all agents): same pattern
+- Both use FilterBar (status + date)
+- APIs:
+  - `GET /api/admin/security-deposits` — all, filters
+  - `PATCH /api/admin/security-deposits/[id]` — approve/reject (triggers balance update same as deposit logic)
+  - `GET /api/admin/security-withdrawals` — all, filters
+  - `PATCH /api/admin/security-withdrawals/[id]` — approve/reject (triggers balance update same as withdrawal logic)
+
+**Routes:** `/admin/security-deposits` · `/admin/security-withdrawals`
+
+---
+
+### Phase A4 — Live Pool Management ⬜
+
+#### Step A4.1 — Job Management
+- Jobs list: filter by status (available/grabbed/expired); shows amount, bank, created time, expiry countdown, grabbed-by agent if applicable
+- Create job form: select bank (from all active banks across all agents), amount, expiry duration (minutes)
+- Cancel an active job: updates status to expired, broadcasts `job.expired` Pusher event
+- On create: broadcasts `job.available` Pusher event to `live-pool` channel
+- APIs:
+  - `GET /api/admin/live-pool` — all jobs, status filter
+  - `POST /api/admin/live-pool` — create job (validates bank exists + active; broadcasts Pusher event)
+  - `PATCH /api/admin/live-pool/[id]` — cancel/force-expire (broadcasts Pusher event)
+
+**Routes:** `/admin/live-pool` · `/admin/live-pool/create`
+
+---
+
+### Phase A5 — Finance & Commissions ⬜
+
+#### Step A5.1 — Commission Management
+- Performance commissions list: all agents, filter by status (pending/released); Release button per row; release credits `commissionEarned` on agent atomically
+- Referral cycles list: all cycles across agents, status (active/closed/paid); Close Cycle button ends active cycle; Release Payout button credits agent `commissionEarned`
+- APIs:
+  - `GET /api/admin/commissions` — performance records, status filter
+  - `PATCH /api/admin/commissions/[id]` — release (updates PerformanceCommission status + agent commissionEarned)
+  - `GET /api/admin/commissions/referral` — referral cycles, status filter
+  - `PATCH /api/admin/commissions/referral/[id]` — close cycle or release payout
+
+**Routes:** `/admin/commissions` · `/admin/commissions/referral`
+
+#### Step A5.2 — Manual Adjustments
+- Create adjustment: pick agent (search by phone), type (credit/debit), amount, description; credit adds to `netBalance`, debit subtracts (with balance floor check)
+- All adjustments log: filter by agent, type (credit/debit), date range (reuse FilterBar)
+- APIs:
+  - `GET /api/admin/adjustments` — all adjustments, filters
+  - `POST /api/admin/adjustments` — create; atomically updates agent `netBalance`
+
+**Routes:** `/admin/adjustments` · `/admin/adjustments/create`
+
+#### Step A5.3 — Reports
+- Platform finance report: date range picker; totals for deposits, withdrawals, security deposits, security withdrawals, commissions released, adjustments (credit vs debit)
+- Per-agent drill-down: same breakdown but filtered to one agent (link from agent detail page)
+- CSV export for any report view
+- APIs:
+  - `GET /api/admin/reports/finance` — aggregated platform totals, date filter, optional `?agentId=X` for per-agent
+  - `GET /api/admin/reports/finance/export` — streams CSV
+
+**Routes:** `/admin/reports`
+
+---
+
+### Phase A6 — Support & Settings ⬜
+
+#### Step A6.1 — Support Tickets
+- Tickets list: filter by status (open/closed), date; open tickets surfaced first
+- Ticket detail: full message thread (agent message + admin replies in order); reply form at bottom; Close Ticket button
+- APIs:
+  - `GET /api/admin/support` — all tickets, status filter, date filter
+  - `GET /api/admin/support/[id]` — ticket + full reply thread
+  - `POST /api/admin/support/[id]/reply` — adds admin reply to thread
+  - `PATCH /api/admin/support/[id]` — close/reopen ticket
+
+**Routes:** `/admin/support` · `/admin/support/[id]`
+
+#### Step A6.2 — Platform Settings
+- Withdrawal: global default `maxWithdrawalPerTxn` (agent-level override takes precedence if set)
+- Commission rates: performance commission percentage, referral commission percentage
+- Maintenance mode toggle: when ON, all agent logins are rejected with a maintenance message (checked in user `middleware.ts`)
+- Tier config: edit each tier's name, minimum deposit threshold, commission rate, withdrawal limit
+- FAQ management: add / edit / delete FAQ items (used by `/help/faq` user page)
+- Tutorial management: add / edit / delete tutorial steps (used by `/help/tutorial` user page)
+- APIs:
+  - `GET /api/admin/settings` — all platform settings as single object
+  - `PATCH /api/admin/settings` — partial update (any field)
+  - `GET /api/admin/settings/faq` — all FAQ items
+  - `POST /api/admin/settings/faq` — add item
+  - `PATCH /api/admin/settings/faq/[id]` — edit item
+  - `DELETE /api/admin/settings/faq/[id]` — delete item
+  - `GET /api/admin/settings/tutorial` — all tutorial steps
+  - `POST /api/admin/settings/tutorial` — add step
+  - `PATCH /api/admin/settings/tutorial/[id]` — edit step
+  - `DELETE /api/admin/settings/tutorial/[id]` — delete step
+
+**Routes:** `/admin/settings`
+
+---
+
+### Admin Route Checklist
+
+| Phase | Route | UI | API |
+|-------|-------|----|-----|
+| A1 | `/[adminKey]/login` | ✅ | ✅ |
+| A1 | `/admin` (dashboard) | ✅ | ✅ |
+| A2 | `/admin/agents` | ⬜ | ⬜ |
+| A2 | `/admin/agents/[id]` | ⬜ | ⬜ |
+| A2 | `/admin/transactions` | ⬜ | ⬜ |
+| A2 | `/admin/transactions/[id]` | ⬜ | ⬜ |
+| A2 | `/admin/banks` | ⬜ | ⬜ |
+| A3 | `/admin/utr` | ⬜ | ⬜ |
+| A3 | `/admin/security-deposits` | ⬜ | ⬜ |
+| A3 | `/admin/security-withdrawals` | ⬜ | ⬜ |
+| A4 | `/admin/live-pool` | ⬜ | ⬜ |
+| A4 | `/admin/live-pool/create` | ⬜ | ⬜ |
+| A5 | `/admin/commissions` | ⬜ | ⬜ |
+| A5 | `/admin/commissions/referral` | ⬜ | ⬜ |
+| A5 | `/admin/adjustments` | ⬜ | ⬜ |
+| A5 | `/admin/adjustments/create` | ⬜ | ⬜ |
+| A5 | `/admin/reports` | ⬜ | ⬜ |
+| A6 | `/admin/support` | ⬜ | ⬜ |
+| A6 | `/admin/support/[id]` | ⬜ | ⬜ |
+| A6 | `/admin/settings` | ⬜ | ⬜ |
+
+### Admin Data Models (To Create)
+
+| Model | Key Fields | Phase | Status |
+|-------|-----------|-------|--------|
+| `Admin` | name, phone, passwordHash, isActive, createdAt | A1 | ✅ |
+| `PlatformSettings` | maintenanceMode, defaultMaxWithdrawal, performanceCommissionRate, referralCommissionRate, updatedAt | A6 | ⬜ |
+| `FAQItem` | question, answer, order, createdAt | A6 | ⬜ |
+| `TutorialStep` | title, body, order, createdAt | A6 | ⬜ |
+| `AdminReply` | ticketId, adminId, message, createdAt | A6 | ⬜ |
+
+> `SupportTicket` model already exists from Phase 3 — extend with `replies[]` array or use `AdminReply` collection.

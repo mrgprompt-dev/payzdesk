@@ -1,5 +1,3 @@
-// ─── User ────────────────────────────────────────────────────────────────────
-
 export interface IUser {
 	_id: string;
 	phone: string;
@@ -27,10 +25,28 @@ export interface IUser {
 
 export type PublicUser = Omit<IUser, "passwordHash">;
 
+// ─── Admin ────────────────────────────────────────────────────────────────────
+
+export interface IAdmin {
+	_id: string;
+	name: string;
+	phone: string;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string;
+}
+
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export interface AuthTokenPayload {
 	userId: string;
+	phone: string;
+	iat?: number;
+	exp?: number;
+}
+
+export interface AdminTokenPayload {
+	adminId: string;
 	phone: string;
 	iat?: number;
 	exp?: number;
@@ -85,7 +101,13 @@ export interface ITransaction {
 	userId: string;
 	type: "deposit" | "withdrawal" | "security_deposit" | "security_withdrawal";
 	amount: number;
-	status: "pending" | "processing" | "completed" | "failed" | "disputed" | "cancelled";
+	status:
+		| "pending"
+		| "processing"
+		| "completed"
+		| "failed"
+		| "disputed"
+		| "cancelled";
 	bankId?: string;
 	utrNumber?: string;
 	referenceId?: string;
@@ -93,7 +115,6 @@ export interface ITransaction {
 	createdAt: string;
 	updatedAt: string;
 }
-
 
 // ─── UTR ──────────────────────────────────────────────────────────────────────
 
@@ -116,13 +137,14 @@ export interface ApiResponse<T = unknown> {
 	data?: T;
 	error?: string;
 }
+
 // ─── Referral ─────────────────────────────────────────────────────────────────
 
 export interface IReferralCycle {
 	_id: string;
 	userId: string;
-	startDate: string; // ISO string
-	endDate: string; // ISO string
+	startDate: string;
+	endDate: string;
 	amount: number;
 	status: "pending_payout" | "credited";
 	createdAt: string;
@@ -131,8 +153,8 @@ export interface IReferralCycle {
 
 export interface IReferralCommission {
 	_id: string;
-	referrerId: string; // user who referred
-	referredUserId: string; // user who was referred
+	referrerId: string;
+	referredUserId: string;
 	cycleId: string;
 	amount: number;
 	createdAt: string;
@@ -141,7 +163,7 @@ export interface IReferralCommission {
 export interface IReferredUser {
 	_id: string;
 	name: string;
-	phone: string; // masked: last 4 digits visible
+	phone: string;
 	joinedAt: string;
 	totalCommission: number;
 }
@@ -159,6 +181,7 @@ export interface ReferralStats {
 	referredUsers: IReferredUser[];
 	commissionHistory: IReferralCommission[];
 }
+
 // ─── Performance Commission ───────────────────────────────────────────────────
 
 export interface IActiveProgram {
@@ -170,7 +193,7 @@ export interface IActiveProgram {
 export interface IPerformanceCommission {
 	totalEarned: number;
 	status: "released" | "pending";
-	lastReleasedDate: string | null; // ISO string or null
+	lastReleasedDate: string | null;
 	frequencyDays: number;
 	activePrograms: IActiveProgram[];
 }
@@ -191,7 +214,7 @@ export interface CommissionDetailsResponse {
 	records: CommissionDetail[];
 }
 
-// Reports
+// ─── Reports ─────────────────────────────────────────────────────────────────
 
 export interface FinanceReportSummary {
 	totalDeposits: number;
@@ -223,7 +246,7 @@ export interface AdjustmentsResponse {
 	records: IAdjustment[];
 }
 
-// Tiers
+// ─── Tiers ────────────────────────────────────────────────────────────────────
 
 export interface ITierBenefit {
 	label: string;
@@ -246,4 +269,16 @@ export interface TiersResponse {
 	nextTier: ITier | null;
 	progressPercent: number;
 	totalCompletedDeposits: number;
+}
+
+// ─── Admin Stats ──────────────────────────────────────────────────────────────
+
+export interface AdminStats {
+	totalAgents: number;
+	pendingDeposits: number;
+	pendingWithdrawals: number;
+	pendingUTRs: number;
+	pendingBanks: number;
+	openTickets: number;
+	activeLiveJobs: number;
 }
