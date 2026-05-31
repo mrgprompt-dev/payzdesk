@@ -125,6 +125,7 @@ export interface IUTR {
 	utrNumber: string;
 	amount: number;
 	status: "pending" | "verified" | "rejected";
+	notes?: string;
 	createdAt: string;
 	updatedAt: string;
 }

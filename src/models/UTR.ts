@@ -31,6 +31,10 @@ const utrSchema = new Schema(
       enum: ["pending", "verified", "rejected"],
       default: "pending",
     },
+    notes: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

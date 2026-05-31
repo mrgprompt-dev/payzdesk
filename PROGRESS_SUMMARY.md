@@ -175,9 +175,9 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 ---
 
-### Phase A3 — UTR & Security ⬜
+### Phase A3 — UTR & Security ✅
 
-#### Step A3.1 — UTR Verification
+#### Step A3.1 — UTR Verification ✅
 - Pending UTR queue: UTR number, amount, agent, bank name, submitted date; Verify / Reject inline; reject requires reason
 - Full UTR history: status filter + agent search + date range (reuse FilterBar)
 - APIs:
@@ -186,7 +186,7 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 **Routes:** `/admin/utr`
 
-#### Step A3.2 — Security Operations
+#### Step A3.2 — Security Operations ✅
 - Security deposits list (all agents): pending ones at top; Approve / Reject inline
 - Security withdrawals list (all agents): same pattern
 - Both use FilterBar (status + date)
@@ -297,9 +297,9 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 | A2 | `/admin/transactions` | ✅ | ✅ |
 | A2 | `/admin/transactions/[id]` | ✅ | ✅ |
 | A2 | `/admin/banks` | ✅ | ✅ |
-| A3 | `/admin/utr` | ⬜ | ⬜ |
-| A3 | `/admin/security-deposits` | ⬜ | ⬜ |
-| A3 | `/admin/security-withdrawals` | ⬜ | ⬜ |
+| A3 | `/admin/utr` | ✅ | ✅ |
+| A3 | `/admin/security-deposits` | ✅ | ✅ |
+| A3 | `/admin/security-withdrawals` | ✅ | ✅ |
 | A4 | `/admin/live-pool` | ⬜ | ⬜ |
 | A4 | `/admin/live-pool/create` | ⬜ | ⬜ |
 | A5 | `/admin/commissions` | ⬜ | ⬜ |
