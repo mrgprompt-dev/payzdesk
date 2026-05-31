@@ -5,7 +5,7 @@ export interface IReferralCycleDoc extends Document {
 	startDate: Date;
 	endDate: Date;
 	amount: number;
-	status: "pending_payout" | "credited";
+	status: "active" | "closed" | "pending_payout" | "credited";
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -23,7 +23,7 @@ const ReferralCycleSchema = new Schema<IReferralCycleDoc>(
 		amount: { type: Number, default: 0 },
 		status: {
 			type: String,
-			enum: ["pending_payout", "credited"],
+			enum: ["active", "closed", "pending_payout", "credited"],
 			default: "pending_payout",
 		},
 	},

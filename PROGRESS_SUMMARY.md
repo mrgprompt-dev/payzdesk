@@ -200,9 +200,9 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 ---
 
-### Phase A4 — Live Pool Management ⬜
+### Phase A4 — Live Pool Management ✅
 
-#### Step A4.1 — Job Management
+#### Step A4.1 — Job Management ✅
 - Jobs list: filter by status (available/grabbed/expired); shows amount, bank, created time, expiry countdown, grabbed-by agent if applicable
 - Create job form: select bank (from all active banks across all agents), amount, expiry duration (minutes)
 - Cancel an active job: updates status to expired, broadcasts `job.expired` Pusher event
@@ -216,9 +216,9 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 ---
 
-### Phase A5 — Finance & Commissions ⬜
+### Phase A5 — Finance & Commissions ✅
 
-#### Step A5.1 — Commission Management
+#### Step A5.1 — Commission Management ✅
 - Performance commissions list: all agents, filter by status (pending/released); Release button per row; release credits `commissionEarned` on agent atomically
 - Referral cycles list: all cycles across agents, status (active/closed/paid); Close Cycle button ends active cycle; Release Payout button credits agent `commissionEarned`
 - APIs:
@@ -229,7 +229,7 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 **Routes:** `/admin/commissions` · `/admin/commissions/referral`
 
-#### Step A5.2 — Manual Adjustments
+#### Step A5.2 — Finance & Adjustments ✅
 - Create adjustment: pick agent (search by phone), type (credit/debit), amount, description; credit adds to `netBalance`, debit subtracts (with balance floor check)
 - All adjustments log: filter by agent, type (credit/debit), date range (reuse FilterBar)
 - APIs:
@@ -250,9 +250,9 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 ---
 
-### Phase A6 — Support & Settings ⬜
+### Phase A6 — Support & System Settings ✅
 
-#### Step A6.1 — Support Tickets
+#### Step A6.1 — Support Tickets ✅
 - Tickets list: filter by status (open/closed), date; open tickets surfaced first
 - Ticket detail: full message thread (agent message + admin replies in order); reply form at bottom; Close Ticket button
 - APIs:
@@ -263,7 +263,7 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 **Routes:** `/admin/support` · `/admin/support/[id]`
 
-#### Step A6.2 — Platform Settings
+#### Step A6.2 — Global Settings ✅
 - Withdrawal: global default `maxWithdrawalPerTxn` (agent-level override takes precedence if set)
 - Commission rates: performance commission percentage, referral commission percentage
 - Maintenance mode toggle: when ON, all agent logins are rejected with a maintenance message (checked in user `middleware.ts`)
@@ -300,16 +300,16 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 | A3 | `/admin/utr` | ✅ | ✅ |
 | A3 | `/admin/security-deposits` | ✅ | ✅ |
 | A3 | `/admin/security-withdrawals` | ✅ | ✅ |
-| A4 | `/admin/live-pool` | ⬜ | ⬜ |
-| A4 | `/admin/live-pool/create` | ⬜ | ⬜ |
-| A5 | `/admin/commissions` | ⬜ | ⬜ |
-| A5 | `/admin/commissions/referral` | ⬜ | ⬜ |
-| A5 | `/admin/adjustments` | ⬜ | ⬜ |
-| A5 | `/admin/adjustments/create` | ⬜ | ⬜ |
+| A4 | `/admin/live-pool` | ✅ | ✅ |
+| A4 | `/admin/live-pool/create` | ✅ | ✅ |
+| A5 | `/admin/commissions` | ✅ | ✅ |
+| A5 | `/admin/commissions/referral` | ✅ | ✅ |
+| A5 | `/admin/adjustments` | ✅ | ✅ |
+| A5 | `/admin/adjustments/create` | ✅ | ✅ |
 | A5 | `/admin/reports` | ⬜ | ⬜ |
-| A6 | `/admin/support` | ⬜ | ⬜ |
-| A6 | `/admin/support/[id]` | ⬜ | ⬜ |
-| A6 | `/admin/settings` | ⬜ | ⬜ |
+| A6 | `/admin/support` | ✅ | ✅ |
+| A6 | `/admin/support/[id]` | ✅ | ✅ |
+| A6 | `/admin/settings` | ✅ | ✅ |
 
 ### Admin Data Models (To Create)
 

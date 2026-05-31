@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { signAccessToken, signRefreshToken, accessCookieOptions, refreshCookieOptions, ACCESS_COOKIE, REFRESH_COOKIE } from '@/lib/auth'
 import { User } from '@/models/User'
+import GlobalSetting from '@/models/GlobalSetting'
 import { sanitizePhone } from '@/utils'
 import { z } from 'zod'
 import { cookies } from 'next/headers'
@@ -27,6 +28,14 @@ export async function POST(req: NextRequest) {
     const phone = sanitizePhone(rawPhone)
 
     await connectDB()
+
+    const globalSetting = await GlobalSetting.findOne().select('maintenanceMode').lean()
+    if (globalSetting?.maintenanceMode) {
+      return NextResponse.json(
+        { success: false, message: 'The platform is currently under maintenance. Please try again later.' },
+        { status: 503 }
+      )
+    }
 
     const user = await User.findOne({ phone })
 

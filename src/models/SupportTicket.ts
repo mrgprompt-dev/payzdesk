@@ -5,6 +5,11 @@ export interface ISupportTicket extends mongoose.Document {
   subject: string
   message: string
   status: 'open' | 'closed'
+  replies: Array<{
+    sender: 'user' | 'admin'
+    message: string
+    createdAt: Date
+  }>
   createdAt: Date
   updatedAt: Date
 }
@@ -15,6 +20,13 @@ const SupportTicketSchema = new mongoose.Schema(
     subject: { type: String, required: true },
     message: { type: String, required: true },
     status: { type: String, enum: ['open', 'closed'], default: 'open' },
+    replies: [
+      {
+        sender: { type: String, enum: ['user', 'admin'], required: true },
+        message: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 )

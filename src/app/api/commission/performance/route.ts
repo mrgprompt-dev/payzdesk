@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
 			);
 		}
 
-		let record = await PerformanceCommission.findOne({
+		const record = await PerformanceCommission.findOne({
 			userId: auth.userId,
 		}).lean();
 

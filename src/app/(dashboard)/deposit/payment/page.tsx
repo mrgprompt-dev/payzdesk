@@ -45,8 +45,10 @@ function PaymentConfirmationContent() {
 
   useEffect(() => {
     if (!bankId || isNaN(amount) || amount <= 0) {
-      setBankError(true)
-      setBankLoading(false)
+      queueMicrotask(() => {
+        setBankError(true)
+        setBankLoading(false)
+      })
       return
     }
 

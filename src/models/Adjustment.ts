@@ -6,6 +6,7 @@ export interface IAdjustmentDoc extends Document {
 	amount: number;
 	description: string;
 	referenceId?: string;
+	targetWallet: "netBalance" | "commissionEarned";
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -22,6 +23,11 @@ const AdjustmentSchema = new Schema<IAdjustmentDoc>(
 		amount: { type: Number, required: true },
 		description: { type: String, required: true, trim: true },
 		referenceId: { type: String, trim: true },
+		targetWallet: { 
+			type: String, 
+			enum: ["netBalance", "commissionEarned"], 
+			default: "netBalance" 
+		},
 	},
 	{ timestamps: true },
 );

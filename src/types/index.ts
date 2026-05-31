@@ -147,7 +147,7 @@ export interface IReferralCycle {
 	startDate: string;
 	endDate: string;
 	amount: number;
-	status: "pending_payout" | "credited";
+	status: "active" | "closed" | "pending_payout" | "credited";
 	createdAt: string;
 	updatedAt: string;
 }
@@ -177,7 +177,7 @@ export interface ReferralStats {
 		startDate: string;
 		endDate: string;
 		amount: number;
-		status: "pending_payout" | "credited";
+		status: "active" | "closed" | "pending_payout" | "credited";
 	} | null;
 	referredUsers: IReferredUser[];
 	commissionHistory: IReferralCommission[];

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { LivePoolJob } from "@/models/LivePoolJob";
+import { Transaction } from "@/models/Transaction";
+import { User } from "@/models/User";
 import { getAuthUser } from "@/lib/getAuthUser";
 import { pusherServer } from "@/lib/pusher";
 
@@ -25,6 +27,23 @@ export async function POST(req: NextRequest) {
     if (new Date(job.expiresAt) < new Date()) {
       job.status = "expired";
       await job.save();
+
+      const transaction = await Transaction.findOneAndUpdate(
+        { _id: job.transactionId, status: "pending" },
+        {
+          $set: {
+            status: "cancelled",
+            notes: "Live pool job expired",
+          },
+        },
+        { new: true }
+      );
+
+      if (transaction?.userId && transaction.amount > 0) {
+        await User.findByIdAndUpdate(transaction.userId, {
+          $inc: { blockedDeposit: -transaction.amount },
+        });
+      }
       
       if (process.env.PUSHER_APP_ID && process.env.PUSHER_APP_ID !== 'not_set') {
         try {

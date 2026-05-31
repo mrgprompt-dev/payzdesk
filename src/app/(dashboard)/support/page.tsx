@@ -11,6 +11,11 @@ interface ITicket {
   subject: string
   message: string
   status: 'open' | 'closed'
+  replies?: Array<{
+    sender: 'user' | 'admin'
+    message: string
+    createdAt: string
+  }>
   createdAt: string
 }
 
@@ -148,7 +153,7 @@ export default function SupportPage() {
           </div>
         ) : tickets.length === 0 ? (
           <div className="page-card text-center py-8">
-            <p className="text-sm text-secondary">You haven't submitted any support tickets yet.</p>
+            <p className="text-sm text-secondary">You haven&apos;t submitted any support tickets yet.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -169,6 +174,25 @@ export default function SupportPage() {
                 <div className="text-[13px] text-secondary leading-relaxed p-3 bg-bg-secondary rounded-sm border border-border-subtle">
                   {ticket.message}
                 </div>
+                {ticket.replies && ticket.replies.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    {ticket.replies.map((reply, index) => (
+                      <div
+                        key={`${ticket._id}-${index}`}
+                        className={`text-[13px] leading-relaxed p-3 rounded-sm border ${
+                          reply.sender === 'admin'
+                            ? 'text-primary bg-[rgba(212,175,55,0.08)] border-[rgba(212,175,55,0.2)]'
+                            : 'text-secondary bg-bg-secondary border-border-subtle'
+                        }`}
+                      >
+                        <div className="text-[11px] font-semibold text-muted uppercase mb-1">
+                          {reply.sender === 'admin' ? 'Admin Reply' : 'You'} · {formatDateTime(reply.createdAt)}
+                        </div>
+                        {reply.message}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

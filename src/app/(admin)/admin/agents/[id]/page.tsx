@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Card } from "@/components/ui/Card";
@@ -41,12 +41,6 @@ export default function AgentDetailPage() {
 			return res.data?.data;
 		},
 	});
-
-	useEffect(() => {
-		if (data && !isEditingLimit && !limitInput) {
-			setLimitInput(data.maxWithdrawalPerTxn.toString());
-		}
-	}, [data, isEditingLimit, limitInput]);
 
 	const mutation = useMutation({
 		mutationFn: async (updates: any) => {
@@ -168,7 +162,14 @@ export default function AgentDetailPage() {
 									<Button size="sm" onClick={handleSaveLimit} disabled={mutation.isPending}>
 										Save
 									</Button>
-									<Button size="sm" variant="ghost" onClick={() => setIsEditingLimit(false)}>
+									<Button
+										size="sm"
+										variant="ghost"
+										onClick={() => {
+											setLimitInput(agent.maxWithdrawalPerTxn.toString());
+											setIsEditingLimit(false);
+										}}
+									>
 										Cancel
 									</Button>
 								</div>
@@ -177,7 +178,14 @@ export default function AgentDetailPage() {
 									<span className="text-foreground font-medium">
 										₹{agent.maxWithdrawalPerTxn.toLocaleString("en-IN")}
 									</span>
-									<Button size="sm" variant="secondary" onClick={() => setIsEditingLimit(true)}>
+									<Button
+										size="sm"
+										variant="secondary"
+										onClick={() => {
+											setLimitInput(agent.maxWithdrawalPerTxn.toString());
+											setIsEditingLimit(true);
+										}}
+									>
 										Edit
 									</Button>
 								</div>
