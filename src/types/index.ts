@@ -88,7 +88,7 @@ export interface IBankAccount {
 	branch: string;
 	address: string;
 	phone: string;
-	status: "active" | "inactive" | "pending";
+	status: "active" | "inactive" | "pending" | "rejected";
 	verified: boolean;
 	createdAt: string;
 	updatedAt: string;

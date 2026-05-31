@@ -137,10 +137,10 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 ---
 
-### Phase A2 — Core Operations ⬜
+### Phase A2 — Core Operations ✅
 *The bread and butter — what admin needs daily to operate the platform.*
 
-#### Step A2.1 — Agent Management
+#### Step A2.1 — Agent Management ✅
 - Agent list: table with phone, name, balance, status, join date; search by phone/name; filter by active/inactive
 - Agent detail: profile card, balance breakdown (netBalance, blockedDeposit, withdrawalHoldAmount, commissionEarned), bank accounts list, last 10 transactions
 - Actions on detail page: toggle active/inactive, override `maxWithdrawalPerTxn`
@@ -151,7 +151,7 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 **Routes:** `/admin/agents` · `/admin/agents/[id]`
 
-#### Step A2.2 — Transaction Approval
+#### Step A2.2 — Transaction Approval ✅
 - Pending deposits queue: sorted oldest-first; each row shows agent phone, amount, bank, submitted date; inline Approve / Reject buttons; reject opens a note input
 - Pending withdrawals queue: same pattern
 - All transactions view: full cross-agent history; filters: type, status, agent search, date range (reuse FilterBar)
@@ -163,7 +163,7 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 
 **Routes:** `/admin/transactions` · `/admin/transactions/[id]`
 
-#### Step A2.3 — Bank Account Approval
+#### Step A2.3 — Bank Account Approval ✅
 - All bank accounts across all agents: filter by status (pending/active/inactive/rejected); search by agent phone or account number
 - Pending accounts surfaced at top; Approve / Reject inline
 - Approved accounts can be deactivated; inactive accounts can be reactivated
@@ -292,11 +292,11 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 |-------|-------|----|-----|
 | A1 | `/[adminKey]/login` | ✅ | ✅ |
 | A1 | `/admin` (dashboard) | ✅ | ✅ |
-| A2 | `/admin/agents` | ⬜ | ⬜ |
-| A2 | `/admin/agents/[id]` | ⬜ | ⬜ |
-| A2 | `/admin/transactions` | ⬜ | ⬜ |
-| A2 | `/admin/transactions/[id]` | ⬜ | ⬜ |
-| A2 | `/admin/banks` | ⬜ | ⬜ |
+| A2 | `/admin/agents` | ✅ | ✅ |
+| A2 | `/admin/agents/[id]` | ✅ | ✅ |
+| A2 | `/admin/transactions` | ✅ | ✅ |
+| A2 | `/admin/transactions/[id]` | ✅ | ✅ |
+| A2 | `/admin/banks` | ✅ | ✅ |
 | A3 | `/admin/utr` | ⬜ | ⬜ |
 | A3 | `/admin/security-deposits` | ⬜ | ⬜ |
 | A3 | `/admin/security-withdrawals` | ⬜ | ⬜ |

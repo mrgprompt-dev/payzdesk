@@ -18,7 +18,7 @@ const bankAccountSchema = new Schema(
     phone:         { type: String, default: "" }, // stored for records, OTP sent to user's registered phone
     status: {
       type: String,
-      enum: ["active", "inactive", "pending"],
+      enum: ["active", "inactive", "pending", "rejected"],
       default: "pending",
     },
     verified: { type: Boolean, default: false },
