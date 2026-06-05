@@ -306,7 +306,7 @@ FAQ, tutorial, deposit payment confirmation, support (form + ticket history), li
 | A5 | `/admin/commissions/referral` | ✅ | ✅ |
 | A5 | `/admin/adjustments` | ✅ | ✅ |
 | A5 | `/admin/adjustments/create` | ✅ | ✅ |
-| A5 | `/admin/reports` | ⬜ | ⬜ |
+| A5 | `/admin/reports` | ✅ | ✅ |
 | A6 | `/admin/support` | ✅ | ✅ |
 | A6 | `/admin/support/[id]` | ✅ | ✅ |
 | A6 | `/admin/settings` | ✅ | ✅ |

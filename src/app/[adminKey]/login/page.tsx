@@ -47,8 +47,6 @@ export default function AdminLoginPage() {
     return (
         <div className="min-h-screen bg-page flex items-center justify-center p-5">
             <div className="w-full max-w-[380px]">
-
-                {/* Header */}
                 <div className="mb-[28px]">
                     <p className="text-[22px] font-bold text-primary">
                         Payz<span className="text-gold">Desk</span>
@@ -58,15 +56,12 @@ export default function AdminLoginPage() {
                     </p>
                 </div>
 
-                {/* Card */}
                 <div className="bg-card-solid border border-border rounded-[12px] py-[28px] px-6">
                     <form
                         onSubmit={handleSubmit}
                         className="flex flex-col gap-4"
                         noValidate
                     >
-
-                        {/* Phone */}
                         <div>
                             <label
                                 htmlFor="phone"
@@ -75,7 +70,10 @@ export default function AdminLoginPage() {
                                 Phone Number
                             </label>
                             <div className="relative">
-                                <span className="absolute left-[14px] top-1/2 -translate-y-1/2 text-sm text-secondary font-medium select-none">
+                                <span
+                                    className="absolute left-[14px] top-1/2 -translate-y-1/2 text-sm text-secondary font-medium select-none"
+                                    style={{ pointerEvents: 'none', zIndex: 1 }}
+                                >
                                     +91
                                 </span>
                                 <input
@@ -86,14 +84,14 @@ export default function AdminLoginPage() {
                                     placeholder="9876543210"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                    className="form-input pl-[46px]"
+                                    className="form-input"
+                                    style={{ paddingLeft: 52 }}
                                     autoComplete="tel"
                                     autoFocus
                                 />
                             </div>
                         </div>
 
-                        {/* Password */}
                         <div>
                             <label
                                 htmlFor="password"
@@ -105,10 +103,11 @@ export default function AdminLoginPage() {
                                 <input
                                     id="password"
                                     type={showPwd ? 'text' : 'password'}
-                                    placeholder="••••••••"
+                                    placeholder="Enter password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="form-input pr-[46px]"
+                                    className="form-input"
+                                    style={{ paddingRight: 46 }}
                                     autoComplete="current-password"
                                 />
                                 <button
@@ -122,14 +121,12 @@ export default function AdminLoginPage() {
                             </div>
                         </div>
 
-                        {/* Error */}
                         {error && (
                             <div className="py-[10px] px-[14px] bg-danger-dim border border-[rgba(239,68,68,0.3)] rounded-[8px] text-[13px] text-danger-light">
                                 {error}
                             </div>
                         )}
 
-                        {/* Submit */}
                         <button
                             type="submit"
                             disabled={loading}
@@ -138,7 +135,7 @@ export default function AdminLoginPage() {
                             {loading ? (
                                 <>
                                     <Loader2 size={16} className="animate-spin" />
-                                    Signing in…
+                                    Signing in...
                                 </>
                             ) : (
                                 'Sign In'
