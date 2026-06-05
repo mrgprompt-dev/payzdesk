@@ -81,9 +81,8 @@ export async function PATCH(
 
 		try {
 			await session.withTransaction(async () => {
-				// Atomically claim the transaction (only if still pending)
 				const txn = await Transaction.findOneAndUpdate(
-					{ _id: id, status: "pending" },
+					{ _id: id, status: { $in: ["pending", "processing"] } },
 					{
 						$set: {
 							status: newStatus,

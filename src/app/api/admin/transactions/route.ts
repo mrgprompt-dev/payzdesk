@@ -35,7 +35,11 @@ export async function GET(req: NextRequest) {
 		}
 
 		if (status !== "all") {
-			query.status = status;
+			if (status === "pending") {
+				query.status = { $in: ["pending", "processing"] };
+			} else {
+				query.status = status;
+			}
 		}
 
 		if (search) {

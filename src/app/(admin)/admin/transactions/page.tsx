@@ -134,6 +134,7 @@ export default function TransactionsPage() {
 							>
 								<option value="all">All Status</option>
 								<option value="pending">Pending</option>
+								<option value="processing">Processing</option>
 								<option value="completed">Completed</option>
 								<option value="failed">Failed</option>
 								<option value="cancelled">Cancelled</option>
@@ -201,7 +202,7 @@ export default function TransactionsPage() {
 															? "success"
 															: txn.status === "failed" || txn.status === "cancelled"
 															? "danger"
-															: txn.status === "pending"
+															: txn.status === "pending" || txn.status === "processing"
 															? "gold"
 															: "default"
 													}
@@ -214,8 +215,8 @@ export default function TransactionsPage() {
 											</td>
 											<td className="py-3 text-right">
 												<Link href={`/admin/transactions/${txn._id}`}>
-													<Button variant={txn.status === "pending" ? "primary" : "secondary"} size="sm">
-														{txn.status === "pending" ? "Review" : "View"}
+													<Button variant={txn.status === "pending" || txn.status === "processing" ? "primary" : "secondary"} size="sm">
+														{txn.status === "pending" || txn.status === "processing" ? "Review" : "View"}
 													</Button>
 												</Link>
 											</td>

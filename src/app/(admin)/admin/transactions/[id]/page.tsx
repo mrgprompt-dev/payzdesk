@@ -102,7 +102,7 @@ export default function TransactionDetailPage() {
 	}
 
 	const txn = data;
-	const isPending = txn.status === "pending";
+	const isPending = txn.status === "pending" || txn.status === "processing";
 
 	return (
 		<div className="space-y-6">
