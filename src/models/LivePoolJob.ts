@@ -29,9 +29,17 @@ const livePoolJobSchema = new Schema(
       ref: "User",
       default: null,
     },
+    utrNumber: {
+      type: String,
+      default: null,
+    },
     expiresAt: {
       type: Date,
       required: true,
+    },
+    completedAt: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

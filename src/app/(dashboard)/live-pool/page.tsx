@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getPusherClient } from '@/lib/pusherClient'
 import { apiClient } from '@/lib/axios'
 import { AxiosError } from 'axios'
-import { Clock, Zap, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react'
+import { Clock, Zap, AlertCircle, RefreshCw, CheckCircle2, ClipboardList } from 'lucide-react'
 import { formatINR } from '@/utils'
 
 interface ILiveJob {
@@ -58,11 +60,22 @@ function CountdownTimer({ expiresAt, onExpire }: { expiresAt: string, onExpire: 
 }
 
 export default function LivePoolPage() {
+  const router = useRouter()
   const queryClient = useQueryClient()
   
   const [grabbingId, setGrabbingId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+
+  // Fetch count of active (grabbed) jobs for the badge
+  const { data: activeJobs = [] } = useQuery<{ _id: string }[]>({
+    queryKey: ['activeJobsCount'],
+    queryFn: async () => {
+      const res = await apiClient.get('/live-pool/active')
+      return res.data.data ?? []
+    },
+    staleTime: 1000 * 30,
+  })
 
   const { data: jobs = [], isLoading, isError } = useQuery<ILiveJob[]>({
     queryKey: ['livePoolJobs'],
@@ -122,12 +135,14 @@ export default function LivePoolPage() {
     try {
       const res = await apiClient.post('/live-pool/grab', { jobId })
       if (res.data.success) {
-        setSuccessMsg('Job grabbed successfully!')
-        // Remove locally immediately (Pusher will also handle it, but this is faster for the UI)
+        // Remove locally immediately
         queryClient.setQueryData<ILiveJob[]>(['livePoolJobs'], (old) => {
           return (old || []).filter(j => j._id !== jobId)
         })
-        setTimeout(() => setSuccessMsg(''), 3000)
+        // Invalidate active jobs count
+        queryClient.invalidateQueries({ queryKey: ['activeJobsCount'] })
+        // Redirect to active jobs page
+        router.push('/live-pool/active')
       } else {
         setErrorMsg(res.data.message || 'Failed to grab job.')
       }
@@ -158,6 +173,24 @@ export default function LivePoolPage() {
           </div>
         </div>
 
+        {/* Active Jobs link */}
+        <Link
+          href="/live-pool/active"
+          className="flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all active:scale-95"
+          style={{
+            background: activeJobs.length > 0 ? 'rgba(245, 166, 35, 0.15)' : 'rgba(255,255,255,0.05)',
+            color: activeJobs.length > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)',
+            border: activeJobs.length > 0 ? '1px solid rgba(245, 166, 35, 0.3)' : '1px solid var(--border-subtle)',
+          }}
+        >
+          <ClipboardList className="w-3.5 h-3.5" />
+          My Jobs
+          {activeJobs.length > 0 && (
+            <span className="px-1.5 py-0.5 rounded-full bg-gold text-[10px] font-bold text-[#1a1000] min-w-[18px] text-center">
+              {activeJobs.length}
+            </span>
+          )}
+        </Link>
       </div>
 
       {errorMsg && (
@@ -230,7 +263,7 @@ export default function LivePoolPage() {
               <button
                 onClick={() => grabJob(job._id)}
                 disabled={grabbingId !== null}
-                className="mt-2 w-full py-3 rounded-[12px] text-[14px] font-bold text-[#1a1000] bg-green hover:bg-[#0ea5e9] transition-all active:scale-[0.98] z-10 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mt-2 w-full py-3 rounded-[12px] text-[15px] font-extrabold text-white bg-[#10b981] hover:bg-[#059669] transition-all active:scale-[0.98] z-10 flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(16,185,129,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
                 style={grabbingId === job._id ? { opacity: 0.7 } : {}}
               >
                 {grabbingId === job._id ? (

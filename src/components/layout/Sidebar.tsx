@@ -21,6 +21,7 @@ import {
   TrendingUp,
   Hash,
   ArrowDownToLine,
+  Zap,
 } from 'lucide-react'
 
 // ─── Nav config ───────────────────────────────────────────────────────────────
@@ -38,6 +39,11 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Home',
     href: '/',
     icon: LayoutDashboard,
+  },
+  {
+    label: 'Live Pool',
+    href: '/live-pool',
+    icon: Zap,
   },
   {
     label: 'History',

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
@@ -186,6 +187,7 @@ function InlineList({
 // ─── Dashboard page ───────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
+  const router = useRouter()
   const { user, isLoading, fetchMe } = useAuthStore()
 
   useEffect(() => {
@@ -335,6 +337,7 @@ export default function DashboardPage() {
 
         <div className="flex items-center justify-between gap-3">
           <button
+            onClick={() => router.push('/live-pool')}
             disabled={!user?.withdrawalEnabled}
             className={`flex-1 py-3 rounded-full text-[14px] font-bold flex items-center justify-center gap-2 transition-transform ${
               user?.withdrawalEnabled
