@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { LivePoolJob } from "@/models/LivePoolJob";
+import "@/models/BankAccount";
+import "@/models/Transaction";
 import { getAuthUser } from "@/lib/getAuthUser";
 
 export async function GET(req: NextRequest) {

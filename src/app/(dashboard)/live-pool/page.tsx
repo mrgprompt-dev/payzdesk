@@ -158,39 +158,41 @@ export default function LivePoolPage() {
     <div className="flex flex-col gap-6 animate-[fadeIn_200ms_ease-out]">
       
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[rgba(16,185,129,0.15)] border border-[rgba(16,185,129,0.3)] flex items-center justify-center relative">
-            <div className="absolute inset-0 rounded-full border border-green animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] opacity-50" />
-            <Zap className="w-5 h-5 text-green" fill="currentColor" />
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[rgba(16,185,129,0.15)] border border-[rgba(16,185,129,0.3)] flex items-center justify-center relative">
+              <div className="absolute inset-0 rounded-full border border-green animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite] opacity-50" />
+              <Zap className="w-5 h-5 text-green" fill="currentColor" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-primary flex items-center gap-2">
+                Live Pool
+                <span className="px-2 py-0.5 rounded-full bg-green/20 text-green text-[10px] font-bold uppercase tracking-wider">Live</span>
+              </h1>
+              <p className="text-[13px] text-secondary mt-0.5">Grab incoming withdrawal requests</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-primary flex items-center gap-2">
-              Live Pool
-              <span className="px-2 py-0.5 rounded-full bg-green/20 text-green text-[10px] font-bold uppercase tracking-wider">Live</span>
-            </h1>
-            <p className="text-[13px] text-secondary mt-0.5">Grab incoming withdrawal requests</p>
-          </div>
-        </div>
 
-        {/* Active Jobs link */}
-        <Link
-          href="/live-pool/active"
-          className="flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all active:scale-95"
-          style={{
-            background: activeJobs.length > 0 ? 'rgba(245, 166, 35, 0.15)' : 'rgba(255,255,255,0.05)',
-            color: activeJobs.length > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)',
-            border: activeJobs.length > 0 ? '1px solid rgba(245, 166, 35, 0.3)' : '1px solid var(--border-subtle)',
-          }}
-        >
-          <ClipboardList className="w-3.5 h-3.5" />
-          My Jobs
-          {activeJobs.length > 0 && (
-            <span className="px-1.5 py-0.5 rounded-full bg-gold text-[10px] font-bold text-[#1a1000] min-w-[18px] text-center">
-              {activeJobs.length}
-            </span>
-          )}
-        </Link>
+          {/* Active Jobs link */}
+          <Link
+            href="/live-pool/active"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full text-[12px] font-bold transition-all active:scale-95 whitespace-nowrap shrink-0"
+            style={{
+              background: activeJobs.length > 0 ? 'rgba(245, 166, 35, 0.15)' : 'rgba(255,255,255,0.05)',
+              color: activeJobs.length > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)',
+              border: activeJobs.length > 0 ? '1px solid rgba(245, 166, 35, 0.3)' : '1px solid var(--border-subtle)',
+            }}
+          >
+            <ClipboardList className="w-3.5 h-3.5" />
+            Active
+            {activeJobs.length > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-gold text-[10px] font-bold text-[#1a1000] min-w-[18px] text-center">
+                {activeJobs.length}
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
 
       {errorMsg && (
